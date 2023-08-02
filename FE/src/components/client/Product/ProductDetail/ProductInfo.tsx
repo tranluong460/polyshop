@@ -37,7 +37,7 @@ const ProductInfo = ({ product, favoriteUser }: ProductInfoProps) => {
             <div className="flex flex-col gap-5">
               <Image
                 preview={{ visible: false }}
-                src={product?.image?.[0].url}
+                src={product?.images?.[0].url}
                 onClick={() => setVisible(true)}
                 className="border p-2 rounded-lg"
                 width={300}
@@ -50,14 +50,14 @@ const ProductInfo = ({ product, favoriteUser }: ProductInfoProps) => {
                     onVisibleChange: (vis) => setVisible(vis),
                   }}
                 >
-                  {product?.image.map((img) => (
+                  {product?.images.map((img) => (
                     <Image key={img.url} src={img.url} />
                   ))}
                 </Image.PreviewGroup>
               </div>
 
               <div className="flex flex-row gap-3">
-                {product?.image.map((img) => (
+                {product?.images.map((img) => (
                   <Image
                     key={img.url}
                     src={img.url}

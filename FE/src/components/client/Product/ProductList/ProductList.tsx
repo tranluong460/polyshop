@@ -7,8 +7,8 @@ import { useGetAllProductsQuery } from "../../../../api/products";
 
 // Type để truyền dữ liệu giữa các props
 type ProductListProps = {
-  products: IProduct[] | undefined;
-  favoriteUser: IFavoriteUser[] | undefined;
+  products?: IProduct[] | undefined;
+  favoriteUser?: IFavoriteUser[] | undefined;
   title?: string;
   small?: boolean;
   middle?: boolean;
@@ -21,11 +21,9 @@ const ProductList = ({
   middle,
   large,
   title,
-  // products,
+  products,
   favoriteUser,
 }: ProductListProps) => {
-  const { data: products, isLoading, error } = useGetAllProductsQuery()
-  console.log(products);
   return (
     <>
       <div className="space-y-4 rounded-xl p-5 mb-8 bg-white">
@@ -53,8 +51,8 @@ const ProductList = ({
             }
           `}
         >
-          {products.data &&
-            products.data.map((product: IProduct) => (
+          {products &&
+            products.map((product: IProduct) => (
               <ProductCard
                 key={product._id}
                 product={product}

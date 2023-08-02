@@ -52,7 +52,7 @@ const HomePage = ({
                 middle
                 key={slug}
                 title={slug}
-                // products={products}
+                products={products}
                 favoriteUser={favoriteUser}
               />
             )

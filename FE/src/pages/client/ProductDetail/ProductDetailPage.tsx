@@ -14,6 +14,7 @@ import {
 } from "../../../components";
 
 import { IFavoriteUser, IProduct } from "../../../interface";
+import { useGetProductByIdQuery } from "../../../api/products";
 
 type ProductDetailPageProps = {
   favoriteUser: IFavoriteUser[] | undefined;
@@ -25,69 +26,72 @@ const ProductDetailPage = ({
   listProducts,
 }: ProductDetailPageProps) => {
   const { id } = useParams<string>();
-  const [comment, setComment] = useState("");
+  const { data: product } = useGetProductByIdQuery(id!);
+  // console.log(product);
 
-  const product = listProducts && listProducts.find((prod) => prod._id === id);
+  // const [comment, setComment] = useState("");
+
+  const products = listProducts && listProducts.find((prod) => prod._id === id);
 
   const productSimilar =
     listProducts &&
-    listProducts.filter((prod) => prod.category._id === product?.category._id);
+    listProducts.filter((prod) => prod.category._id === products?.category._id && !products)
 
-  const items: TabsProps["items"] = [
-    {
-      key: "1",
-      label: (
-        <>
-          <div className="text-black text-xl">Thông tin sản phẩm</div>
-        </>
-      ),
-      children: <ProductDescription />,
-    },
-    {
-      key: "2",
-      label: (
-        <>
-          <div className="text-black text-xl">Bình luận sản phẩm</div>
-        </>
-      ),
-      children:
-        product && product.comments.length > 0 ? (
-          <ProductComment comments={product.comments} />
-        ) : (
-          <>
-            <div className="text-center p-10">
-              <span className="text-gray-500 text-base">
-                Không có bình luận
-              </span>
-            </div>
+  // const items: TabsProps["items"] = [
+  //   {
+  //     key: "1",
+  //     label: (
+  //       <>
+  //         <div className="text-black text-xl">Thông tin sản phẩm</div>
+  //       </>
+  //     ),
+  //     children: <ProductDescription />,
+  //   },
+  //   {
+  //     key: "2",
+  //     label: (
+  //       <>
+  //         <div className="text-black text-xl">Bình luận sản phẩm</div>
+  //       </>
+  //     ),
+  //     children:
+  //       product && product.comments.length > 0 ? (
+  //         <ProductComment comments={product.comments} />
+  //       ) : (
+  //         <>
+  //           <div className="text-center p-10">
+  //             <span className="text-gray-500 text-base">
+  //               Không có bình luận
+  //             </span>
+  //           </div>
 
-            <div className="py-2 px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200">
-              <label
-                htmlFor="comment"
-                className="text-gray-500 text-xl font-medium"
-              >
-                Bình luận
-              </label>
+  //           <div className="py-2 px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200">
+  //             <label
+  //               htmlFor="comment"
+  //               className="text-gray-500 text-xl font-medium"
+  //             >
+  //               Bình luận
+  //             </label>
 
-              <textarea
-                id="comment"
-                value={comment}
-                rows={5}
-                required
-                placeholder="Nhập bình luận của bạn ..."
-                onChange={(e) => setComment(e.target.value)}
-                className="px-0 w-full text-sm text-gray-900 border-0 pt-3 focus:ring-0 focus:outline-none"
-              />
-            </div>
-            <div className="flex justify-center">
-              <div>
-                <Button label="Bình luận" onClick={() => alert("Bình luận")} />
-              </div>
-            </div>
-          </>
-        ),
-    },
-  ];
+  //             <textarea
+  //               id="comment"
+  //               value={comment}
+  //               rows={5}
+  //               required
+  //               placeholder="Nhập bình luận của bạn ..."
+  //               onChange={(e) => setComment(e.target.value)}
+  //               className="px-0 w-full text-sm text-gray-900 border-0 pt-3 focus:ring-0 focus:outline-none"
+  //             />
+  //           </div>
+  //           <div className="flex justify-center">
+  //             <div>
+  //               <Button label="Bình luận" onClick={() => alert("Bình luận")} />
+  //             </div>
+  //           </div>
+  //         </>
+  //       ),
+  //   },
+  // ];
 
   return (
     <>
@@ -98,7 +102,7 @@ const ProductDetailPage = ({
           </div>
 
           <div className="flex flex-col gap-6">
-            <ProductInfo product={product} favoriteUser={favoriteUser} />
+            <ProductInfo product={product?.data} favoriteUser={favoriteUser} />
 
             <ProductList
               products={productSimilar}
@@ -110,7 +114,7 @@ const ProductDetailPage = ({
               <Tabs
                 defaultActiveKey="1"
                 tabPosition="top"
-                items={items}
+                // items={items}
                 size="large"
                 type="card"
               />
