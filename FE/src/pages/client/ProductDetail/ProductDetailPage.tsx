@@ -14,6 +14,7 @@ import {
 } from "../../../components";
 
 import { IFavoriteUser, IProduct } from "../../../interface";
+import { useGetAllCommentsQuery } from "../../../api/comment";
 
 type ProductDetailPageProps = {
   favoriteUser: IFavoriteUser[] | undefined;
@@ -24,6 +25,8 @@ const ProductDetailPage = ({
   favoriteUser,
   listProducts,
 }: ProductDetailPageProps) => {
+  const { data } = useGetAllCommentsQuery()
+  console.log(data);
   const { id } = useParams<string>();
   const [comment, setComment] = useState("");
 
