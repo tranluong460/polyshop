@@ -1,29 +1,23 @@
-// Import các thư viện
 import { useEffect, useState } from "react";
 import { Upload, Modal, Image } from "antd";
 
-// Import các icon
 import { AiOutlinePlus } from "react-icons/ai";
 
-// Import các interface
 import { IImageProduct } from "../../../interface";
 import type { RcFile, UploadProps } from "antd/es/upload";
 import type { UploadFile } from "antd/es/upload/interface";
 
-// Type để truyền dữ liệu giữa các props
 type UploadImageProps = {
   isEdit: boolean;
   listImage: IImageProduct[];
   handleImageChange: (newFileList: UploadFile[]) => void;
 };
 
-// Khởi tạo component
 const UploadImage = ({
   isEdit,
   listImage,
   handleImageChange,
 }: UploadImageProps) => {
-  // Sử dụng hook
   const [previewImage, setPreviewImage] = useState<string>("");
   const [previewTitle, setPreviewTitle] = useState<string>("");
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);

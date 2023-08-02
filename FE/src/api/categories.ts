@@ -2,6 +2,11 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 import { ICategoryProduct } from "../interface";
 
+type CategoriesResponse = {
+  message: string;
+  data: ICategoryProduct[];
+};
+
 export const categoryApi = createApi({
   reducerPath: "categories",
   tagTypes: ["Category"],
@@ -9,7 +14,7 @@ export const categoryApi = createApi({
     baseUrl: "http://localhost:8080",
   }),
   endpoints: (builder) => ({
-    getAllCategories: builder.query<ICategoryProduct[], void>({
+    getAllCategories: builder.query<CategoriesResponse, void>({
       query: () => `/category`,
       providesTags: ["Category"],
     }),

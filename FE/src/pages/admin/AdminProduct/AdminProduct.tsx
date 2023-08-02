@@ -5,13 +5,17 @@ import {
 } from "antd";
 
 import { ProductDrawer, ProductTable } from "../../../components";
-import { IProduct } from "../../../interface";
+import { ICategoryProduct, IProduct } from "../../../interface";
 
 type AdminProductProps = {
-  listProducts: IProduct[] | null;
+  listProducts: IProduct[] | undefined;
+  listCategories: ICategoryProduct[] | undefined;
 };
 
-const AdminProductPage = ({ listProducts }: AdminProductProps) => {
+const AdminProductPage = ({
+  listProducts,
+  listCategories,
+}: AdminProductProps) => {
   const [isEdit, setIsEdit] = useState(false);
   const [selectedId, setSelectedId] = useState("");
   const [product, setProduct] = useState<IProduct | undefined>();
@@ -74,7 +78,11 @@ const AdminProductPage = ({ listProducts }: AdminProductProps) => {
         open={openDrawer || isEdit}
         title={`${isEdit ? "Cập nhật thông tin" : "Thông tin chi tiết"}`}
       >
-        <ProductDrawer product={product} isEdit={isEdit} />
+        <ProductDrawer
+          product={product}
+          listCategories={listCategories}
+          isEdit={isEdit}
+        />
       </Drawer>
 
       <ProductTable

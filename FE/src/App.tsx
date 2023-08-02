@@ -39,8 +39,11 @@ import { useGetAllProductsQuery } from "./api/products";
 import { useGetAllCategoriesQuery } from "./api/categories";
 
 function App() {
-  const { data: listProducts } = useGetAllProductsQuery();
-  const { data: listCategories } = useGetAllCategoriesQuery();
+  const { data: products } = useGetAllProductsQuery();
+  const { data: categories } = useGetAllCategoriesQuery();
+
+  const listProducts = products?.data;
+  const listCategories = categories?.data;
 
   const [cart, setCart] = useState<ICart | null>(null);
   const [currentUser, setCurrentUser] = useState<IUser | null>(null);
@@ -70,7 +73,7 @@ function App() {
                 cart={cart}
                 isLogin={currentUser !== null}
                 imageUser={currentUser?.image.url}
-                listCategories={listCategories?.data}
+                listCategories={listCategories}
               />
             }
           >
@@ -79,8 +82,8 @@ function App() {
               element={
                 <HomePage
                   favoriteUser={currentUser?.favorite}
-                  listProducts={listProducts?.data}
-                  listCategories={listCategories?.data}
+                  listProducts={listProducts}
+                  listCategories={listCategories}
                 />
               }
             />
@@ -116,7 +119,7 @@ function App() {
                 element={
                   <Favorite
                     favorites={currentUser?.favorite}
-                    listProducts={listProducts?.data}
+                    listProducts={listProducts}
                   />
                 }
               />
@@ -137,8 +140,8 @@ function App() {
               element={
                 <ListProductPage
                   favoriteUser={currentUser?.favorite}
-                  listProducts={listProducts?.data}
-                  listCategories={listCategories?.data}
+                  listProducts={listProducts}
+                  listCategories={listCategories}
                 />
               }
             />
@@ -147,7 +150,7 @@ function App() {
               element={
                 <ProductDetailPage
                   favoriteUser={currentUser?.favorite}
-                  listProducts={listProducts?.data}
+                  listProducts={listProducts}
                 />
               }
             />
@@ -163,13 +166,16 @@ function App() {
             <Route path="dashboard" element={<AdminDashboardPage />} />
             <Route
               path="products"
-              element={<AdminProductPage listProducts={listProducts?.data} />}
+              element={
+                <AdminProductPage
+                  listProducts={listProducts}
+                  listCategories={listCategories}
+                />
+              }
             />
             <Route
               path="categories"
-              element={
-                <AdminCategoryPage listCategories={listCategories?.data} />
-              }
+              element={<AdminCategoryPage listCategories={listCategories} />}
             />
             <Route path="users" element={<AdminUserPage />} />
           </Route>

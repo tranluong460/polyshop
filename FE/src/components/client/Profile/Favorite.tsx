@@ -1,16 +1,12 @@
-// Import các component
 import { ProductList } from "../..";
 
-// Import các interface
 import { IFavoriteUser, IProduct } from "../../../interface";
 
-// Type để truyền dữ liệu giữa các props
 type FavoriteProps = {
   favorites: IFavoriteUser[] | undefined;
-  listProducts: IProduct[] | null;
+  listProducts: IProduct[] | undefined;
 };
 
-// Khởi tạo component
 const Favorite = ({ favorites, listProducts }: FavoriteProps) => {
   const favoriteProducts =
     listProducts && favorites

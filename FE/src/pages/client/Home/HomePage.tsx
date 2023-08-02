@@ -12,8 +12,8 @@ import { ICategoryProduct, IFavoriteUser, IProduct } from "../../../interface";
 
 type HomePageProps = {
   favoriteUser: IFavoriteUser[] | undefined;
-  listProducts: IProduct[] | null;
-  listCategories: ICategoryProduct[] | null;
+  listProducts: IProduct[] | undefined;
+  listCategories: ICategoryProduct[] | undefined;
 };
 
 const HomePage = ({

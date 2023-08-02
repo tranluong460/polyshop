@@ -1,4 +1,3 @@
-// Import các thư viện
 import { useState, useEffect } from "react";
 import {
   Descriptions,
@@ -10,28 +9,40 @@ import {
   Select,
 } from "antd";
 
-// Import các component
 import UploadImage from "./UploadImage";
 
-// Import các interface
-import { IProduct } from "../../../interface";
+import { ICategoryProduct, IProduct } from "../../../interface";
 
 const { Option } = Select;
 
-// Type để truyền dữ liệu giữa các props
 type Props = {
   product: IProduct | undefined;
+  listCategories: ICategoryProduct[] | undefined;
   isEdit: boolean;
 };
 
-// Khởi tạo component
-const ProductDrawer = ({ product, isEdit }: Props) => {
-  // Sử dụng hook
+const ProductDrawer = ({ product, listCategories, isEdit }: Props) => {
   const [form] = Form.useForm();
   const [selectedSlug, setSelectedSlug] = useState("");
 
   const onFinish = (values: IProduct) => {
-    console.log("Success:", values);
+    const matchingCategory = listCategories?.find(
+      (category) =>
+        category.slug === values.category?.slug &&
+        category.brand === values.category?.brand
+    );
+
+    let category;
+
+    if (matchingCategory) {
+      category = matchingCategory._id;
+    }
+
+    const newValues = {
+      ...values,
+      category,
+    };
+    console.log("Success:", newValues);
   };
 
   const handleImageChange = (newFileList: UploadFile[]) => {
@@ -42,17 +53,27 @@ const ProductDrawer = ({ product, isEdit }: Props) => {
     setSelectedSlug(value);
   };
 
-  const slug = [
-    { label: "Điện thoại", value: "Phone" },
-    { label: "Máy tính", value: "Laptop" },
-    { label: "Đồng hồ", value: "Watch" },
-  ];
+  const uniqueSlugs: { [slug: string]: boolean } = {};
+  const slug = listCategories
+    ?.filter((category) => {
+      if (!uniqueSlugs[category.slug]) {
+        uniqueSlugs[category.slug] = true;
+        return true;
+      }
+      return false;
+    })
+    .map((category) => ({
+      label: category.slug,
+      value: category.slug,
+    }));
 
-  const brand: { [key: string]: string[] } = {
-    Phone: ["Phone 1", "Phone 2"],
-    Laptop: ["Laptop 1", "Laptop 2", "Laptop 3"],
-    Watch: ["Watch 1", "Watch 2", "Watch 3"],
-  };
+  const brand: { [key: string]: string[] } = {};
+  listCategories?.forEach((category) => {
+    if (!brand[category.slug]) {
+      brand[category.slug] = [];
+    }
+    brand[category.slug].push(category.brand);
+  });
 
   useEffect(() => {
     if (selectedSlug) {
@@ -230,14 +251,14 @@ const ProductDrawer = ({ product, isEdit }: Props) => {
         >
           <Descriptions.Item>
             <Form.Item
-              name="image"
+              name="images"
               rules={[
                 { required: false, message: "Hình ảnh không được để trống" },
               ]}
             >
               <UploadImage
                 isEdit={isEdit}
-                listImage={product?.image || []}
+                listImage={product?.images || []}
                 handleImageChange={handleImageChange}
               />
             </Form.Item>

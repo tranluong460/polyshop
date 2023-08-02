@@ -7,7 +7,7 @@ import { useGetAllProductsQuery } from "../../../../api/products";
 
 // Type để truyền dữ liệu giữa các props
 type ProductListProps = {
-  products: IProduct[] | null;
+  products: IProduct[] | undefined;
   favoriteUser: IFavoriteUser[] | undefined;
   title?: string;
   small?: boolean;

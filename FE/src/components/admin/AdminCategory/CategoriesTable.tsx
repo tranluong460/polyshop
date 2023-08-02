@@ -1,25 +1,20 @@
-// Import các thư viện
 import type { ColumnsType } from "antd/es/table";
 import { Table, Tooltip, Button, Space, Popconfirm } from "antd";
 
-// Import các icon
 import {
   AiOutlineEdit,
   AiOutlineDelete,
   AiOutlineQuestionCircle,
 } from "react-icons/ai";
 
-// Import các interface
 import { ICategoryProduct } from "../../../interface";
 
-// Type để truyền dữ liệu giữa các props
 type ProductTableProps = {
   isLoading: boolean;
-  listCategories: ICategoryProduct[] | null;
+  listCategories: ICategoryProduct[] | undefined;
   onAction: (_id: string, action: string) => void;
 };
 
-// Khởi tạo component
 const CategoriesTable = ({
   onAction,
   isLoading,
@@ -70,7 +65,7 @@ const CategoriesTable = ({
       ),
       sorter: (a, b) => a.slug.length - b.slug.length,
     },
-   
+
     {
       title: "Thao tác",
       dataIndex: "_id",

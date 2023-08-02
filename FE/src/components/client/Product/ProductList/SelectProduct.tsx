@@ -1,13 +1,10 @@
-// Import các thư viện
 import { useState } from "react";
 import { TreeSelect } from "antd";
 
-// Import các interface
 import { ICategoryProduct } from "../../../../interface";
 
-// Type để truyền dữ liệu giữa các props
 type SelectProductProps = {
-  categories: ICategoryProduct[] | null;
+  categories: ICategoryProduct[] | undefined;
 };
 
 const { SHOW_PARENT } = TreeSelect;
@@ -59,9 +56,7 @@ const treeData = [
   },
 ];
 
-// Khởi tạo component
 const SelectProduct = ({ categories }: SelectProductProps) => {
-  // Sử dụng hook
   const [value, setValue] = useState<string[]>([]);
 
   const onChange = (newValue: string[]) => {

@@ -1,25 +1,20 @@
-// Import các thư viện
 import type { ColumnsType } from "antd/es/table";
 import { Table, Tooltip, Button, Space, Popconfirm } from "antd";
 
-// Import các icon
 import {
   AiOutlineEdit,
   AiOutlineDelete,
   AiOutlineQuestionCircle,
 } from "react-icons/ai";
 
-// Import các interface
 import { IProduct } from "../../../interface";
 
-// Type để truyền dữ liệu giữa các props
 type ProductTableProps = {
   isLoading: boolean;
-  listProducts: IProduct[] | null;
+  listProducts: IProduct[] | undefined;
   onAction: (_id: string, action: string) => void;
 };
 
-// Khởi tạo component
 const ProductTable = ({
   onAction,
   isLoading,

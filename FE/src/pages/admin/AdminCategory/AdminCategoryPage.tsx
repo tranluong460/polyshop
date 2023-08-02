@@ -1,4 +1,4 @@
-import { ICategoryProduct } from "../../../interface"
+import { ICategoryProduct } from "../../../interface";
 import { useEffect, useState } from "react";
 import {
   Drawer,
@@ -7,13 +7,12 @@ import {
 
 import { CategoriesDrawer, CategoriesTable } from "../../../components";
 
-
 type AdminCategoryProps = {
- listCategories : ICategoryProduct[]|null;
-}
+  listCategories: ICategoryProduct[] | undefined;
+};
 
-const AdminCategoryPage = ({listCategories}: AdminCategoryProps) => {
-     const [isEdit, setIsEdit] = useState(false);
+const AdminCategoryPage = ({ listCategories }: AdminCategoryProps) => {
+  const [isEdit, setIsEdit] = useState(false);
   const [selectedId, setSelectedId] = useState("");
   const [cate, setCategories] = useState<ICategoryProduct | undefined>();
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -35,8 +34,8 @@ const AdminCategoryPage = ({listCategories}: AdminCategoryProps) => {
 
     setSelectedId(_id);
   };
-   useEffect(() => {
-    const fetchListCategories =listCategories?.find(
+  useEffect(() => {
+    const fetchListCategories = listCategories?.find(
       (category) => category._id === selectedId
     );
     setCategories(fetchListCategories);
@@ -67,5 +66,4 @@ const AdminCategoryPage = ({listCategories}: AdminCategoryProps) => {
   );
 };
 
-
-export default AdminCategoryPage
+export default AdminCategoryPage;

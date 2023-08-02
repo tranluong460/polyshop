@@ -17,7 +17,7 @@ type BaseClientProps = {
   cart: ICart | null;
   isLogin: boolean;
   imageUser: string | undefined;
-  listCategories: ICategoryProduct[] | null;
+  listCategories: ICategoryProduct[] | undefined;
 };
 
 const BaseClient = ({
