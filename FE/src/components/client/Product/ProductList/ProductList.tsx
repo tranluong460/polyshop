@@ -3,6 +3,7 @@ import ProductCard from "./ProductCard";
 
 // Import các interface
 import { IFavoriteUser, IProduct } from "../../../../interface";
+import { useGetAllProductsQuery } from "../../../../api/products";
 
 // Type để truyền dữ liệu giữa các props
 type ProductListProps = {
@@ -20,9 +21,11 @@ const ProductList = ({
   middle,
   large,
   title,
-  products,
+  // products,
   favoriteUser,
 }: ProductListProps) => {
+  const { data: products, isLoading, error } = useGetAllProductsQuery()
+  console.log(products);
   return (
     <>
       <div className="space-y-4 rounded-xl p-5 mb-8 bg-white">
@@ -34,28 +37,24 @@ const ProductList = ({
 
         <div
           className={`grid grid-cols-1 gap-x-7 gap-y-10
-          ${
-            small &&
+          ${small &&
             "sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
-          }
-          ${
-            middle &&
+            }
+          ${middle &&
             "sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
-          }
-          ${
-            large &&
+            }
+          ${large &&
             "sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7"
-          }
-         ${
-           !small &&
-           !middle &&
-           !large &&
-           " sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
-         }
+            }
+         ${!small &&
+            !middle &&
+            !large &&
+            " sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
+            }
           `}
         >
-          {products &&
-            products.map((product) => (
+          {products.data &&
+            products.data.map((product: IProduct) => (
               <ProductCard
                 key={product._id}
                 product={product}

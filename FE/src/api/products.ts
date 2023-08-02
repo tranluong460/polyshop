@@ -13,7 +13,46 @@ export const productApi = createApi({
       query: () => `/products`,
       providesTags: ["Product"],
     }),
+    getProductById: builder.query<IProduct, string | number>({
+      query: (id) => `/products/${id}`,
+      providesTags: ["Product"],
+    }),
+    addProduct: builder.mutation({
+      query: (product: IProduct) => {
+        return {
+          url: "products",
+          method: "POST",
+          body: product,
+        };
+      },
+      invalidatesTags: ["Product"],
+    }),
+    updateProduct: builder.mutation({
+      query: (product: IProduct) => {
+        return {
+          url: `products/${product._id}`,
+          method: "PATCH",
+          body: product,
+        };
+      },
+      invalidatesTags: ["Product"],
+    }),
+    removeProduct: builder.mutation<IProduct, string | number>({
+      query: (id) => {
+        return {
+          url: `products/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: ["Product"],
+    }),
   }),
 });
 
-export const { useGetAllProductsQuery } = productApi;
+export const {
+  useGetAllProductsQuery,
+  useGetProductByIdQuery,
+  useAddProductMutation,
+  useUpdateProductMutation,
+  useRemoveProductMutation,
+} = productApi;
