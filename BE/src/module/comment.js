@@ -6,6 +6,10 @@ const commentSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "User",
     },
+    id_product: {
+      type: mongoose.Types.ObjectId,
+      ref: "Product", // Reference tới mô hình Product
+    },
     comment: {
       type: String,
       required: true,

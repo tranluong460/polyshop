@@ -31,7 +31,28 @@ export const getAll = async (req, res) => {
     });
   }
 };
+export const getOne = async (req, res) => {
+  try {
+    const data = await Comment.find({ id_product: req.params.id }).populate("user").populate("feed_back");
 
+    if (!data || data.length === 0) {
+      return res.status(200).json({
+        message: "Không có dữ liệu bình luận",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Danh sách bình luận",
+      data,
+    });
+  } catch (err) {
+    console.log(err);
+
+    return res.status(500).json({
+      message: "Lỗi khi lấy danh sách bình luận",
+    });
+  }
+};
 export const create = async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
@@ -56,6 +77,7 @@ export const create = async (req, res) => {
       ...req.body,
       user: decoded.id,
       comment: req.body.comment,
+      id_product: req.params.id
     });
 
     await Product.findByIdAndUpdate(
@@ -198,4 +220,3 @@ export const del = async (req, res) => {
   }
 };
 
-export const getOne = (req, res) => {};
