@@ -1,11 +1,9 @@
 import { ICategoryProduct } from "../../../interface";
 import { useEffect, useState } from "react";
-import {
-  Drawer,
-  //  message
-} from "antd";
+import { Drawer, message } from "antd";
 
 import { CategoriesDrawer, CategoriesTable } from "../../../components";
+import { useDeleteCategoriesMutation } from "../../../api/categories";
 
 type AdminCategoryProps = {
   listCategories: ICategoryProduct[] | undefined;
@@ -16,11 +14,18 @@ const AdminCategoryPage = ({ listCategories }: AdminCategoryProps) => {
   const [selectedId, setSelectedId] = useState("");
   const [cate, setCategories] = useState<ICategoryProduct | undefined>();
   const [openDrawer, setOpenDrawer] = useState(false);
-  // const [messageApi, contextHolder] = message.useMessage();
+  const [messageApi, contextHolder] = message.useMessage();
+  const key = "delete";
+
+  const [deleteCategories, resultDelete] = useDeleteCategoriesMutation();
 
   const onCancel = () => {
     setIsEdit(false);
     setOpenDrawer(false);
+  };
+
+  const remove = (_id: string) => {
+    deleteCategories(_id);
   };
 
   const onAction = (_id: string, action: string) => {
@@ -29,11 +34,34 @@ const AdminCategoryPage = ({ listCategories }: AdminCategoryProps) => {
       : action === "update"
       ? setIsEdit(true)
       : action === "delete"
-      ? "action delete"
+      ? remove(_id)
       : null;
 
     setSelectedId(_id);
   };
+
+  if (resultDelete.isLoading) {
+    messageApi.open({
+      key,
+      type: "loading",
+      content: "Loading...",
+    });
+  }
+  if (resultDelete.isSuccess) {
+    messageApi.open({
+      key,
+      type: "success",
+      content: "Xóa thành công!",
+    });
+  }
+  if (resultDelete.isError) {
+    messageApi.open({
+      key,
+      type: "error",
+      content: "Đã có lỗi xảy ra!",
+    });
+  }
+
   useEffect(() => {
     const fetchListCategories = listCategories?.find(
       (category) => category._id === selectedId
@@ -43,7 +71,7 @@ const AdminCategoryPage = ({ listCategories }: AdminCategoryProps) => {
 
   return (
     <>
-      {/* {contextHolder} */}
+      {contextHolder}
 
       <Drawer
         size="large"

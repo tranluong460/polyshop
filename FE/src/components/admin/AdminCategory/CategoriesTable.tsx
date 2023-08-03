@@ -26,30 +26,16 @@ const CategoriesTable = ({
       dataIndex: "_id",
       key: "_id",
       align: "left",
-      // render: (_id) => (
-      //   <button
-      //     className="hover:text-rose-500"
-      //     onClick={() => onAction(_id, "watch")}
-      //   >
-      //     <Tooltip placement="top" title="Ấn để xem thông tin chi tiết">
-      //       {_id}
-      //     </Tooltip>
-      //   </button>
-      // ),
-    },
-    {
-      title: "Tên thương hiệu ",
-      dataIndex: "brand",
-      key: "brand",
-      align: "left",
-      ellipsis: true,
-      responsive: ["md"],
-      render: (name) => (
-        <Tooltip placement="top" title={name}>
-          {name}
-        </Tooltip>
+      render: (_id) => (
+        <button
+          className="hover:text-rose-500"
+          onClick={() => onAction(_id, "watch")}
+        >
+          <Tooltip placement="top" title="Ấn để xem thông tin chi tiết">
+            {_id}
+          </Tooltip>
+        </button>
       ),
-      sorter: (a, b) => a.brand.length - b.brand.length,
     },
     {
       title: "Tên danh mục ",
@@ -65,7 +51,20 @@ const CategoriesTable = ({
       ),
       sorter: (a, b) => a.slug.length - b.slug.length,
     },
-
+    {
+      title: "Tên thương hiệu ",
+      dataIndex: "brand",
+      key: "brand",
+      align: "left",
+      ellipsis: true,
+      responsive: ["md"],
+      render: (name) => (
+        <Tooltip placement="top" title={name}>
+          {name}
+        </Tooltip>
+      ),
+      sorter: (a, b) => a.brand.length - b.brand.length,
+    },
     {
       title: "Thao tác",
       dataIndex: "_id",
@@ -89,8 +88,8 @@ const CategoriesTable = ({
               cancelText="Hủy"
               onConfirm={() => onAction(_id, "delete")}
               placement="topRight"
-              title="Xóa sản phẩm?"
-              description="Bạn có chắc chắn xóa sản phẩm này không?"
+              title="Xóa danh mục?"
+              description="Bạn có chắc chắn xóa danh mục này không?"
               icon={
                 <AiOutlineQuestionCircle
                   size={20}
