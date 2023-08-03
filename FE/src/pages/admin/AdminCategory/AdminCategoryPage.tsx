@@ -16,6 +16,7 @@ const AdminCategoryPage = ({ listCategories }: AdminCategoryProps) => {
   const [cate, setCategories] = useState<ICategoryProduct | undefined>();
   const [openDrawer, setOpenDrawer] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+
   const key = "delete";
 
   const [deleteCategories, resultDelete] = useDeleteCategoriesMutation();
@@ -36,7 +37,7 @@ const AdminCategoryPage = ({ listCategories }: AdminCategoryProps) => {
       : action === "update"
       ? setIsEdit(true)
       : action === "add"
-      ? setIsAdd(true)
+      ? (setIsAdd(true), setIsEdit(true))
       : action === "delete"
       ? remove(_id)
       : null;

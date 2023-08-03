@@ -62,8 +62,8 @@ const CategoriesDrawer = ({ cate, isEdit, isAdd }: CategoriesDrawerProps) => {
               ]}
             >
               <Input
-                bordered={isEdit || isAdd}
-                readOnly={!isEdit || !isAdd}
+                bordered={isEdit}
+                readOnly={!isEdit}
                 disabled={resultUpdate.isLoading || resultAdd.isLoading}
               />
             </Form.Item>
@@ -77,8 +77,8 @@ const CategoriesDrawer = ({ cate, isEdit, isAdd }: CategoriesDrawerProps) => {
               ]}
             >
               <Input
-                bordered={isEdit || isAdd}
-                readOnly={!isEdit || !isAdd}
+                bordered={isEdit}
+                readOnly={!isEdit}
                 disabled={resultUpdate.isLoading || resultAdd.isLoading}
               />
             </Form.Item>
