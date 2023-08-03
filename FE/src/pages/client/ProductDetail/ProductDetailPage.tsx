@@ -26,14 +26,14 @@ const ProductDetailPage = ({
   favoriteUser,
   listProducts,
 }: ProductDetailPageProps) => {
-  // const { data } = useGetAllCommentsQuery()
-  // console.log(data);
+  const { data: comments } = useGetAllCommentsQuery()
+  console.log(comments);
   const { id } = useParams<string>();
   const [comment, setComment] = useState("");
   const { data } = useGetOneProductsQuery(id!);
 
   const product = data?.data;
-  console.log(product);
+  // console.log(product);
   const productSimilar =
     listProducts &&
     listProducts.filter((prod) => prod.category._id === product?.category._id);
