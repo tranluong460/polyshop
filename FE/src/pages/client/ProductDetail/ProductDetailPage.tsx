@@ -58,8 +58,8 @@ const ProductDetailPage = ({
         </>
       ),
       children:
-        (product?.data && product?.data?.comments?.length) > 0 ? (
-          <ProductComment comments={product?.data?.comments} />
+        (product?.data) ? (
+          <ProductComment comments={comment?.data} />
         ) : (
           <>
             <div className="text-center p-10">
