@@ -1,33 +1,27 @@
-// Import các thư viện
 import { Image } from "antd";
 import { useState } from "react";
 import { InputNumber } from "antd";
 
-// Import các icon
 import { AiOutlineShoppingCart } from "react-icons/ai";
 
-// Import các component
 import Button from "../../../Button";
 import StarButton from "../StarButton";
 import HeartButton from "../HeartButton";
 
-// Import các interface
 import { IFavoriteUser, IProduct } from "../../../../interface";
 
-// Type để truyền dữ liệu giữa các props
 type ProductInfoProps = {
   product?: IProduct | null;
   favoriteUser: IFavoriteUser[] | undefined;
 };
 
-// Khởi tạo component
 const ProductInfo = ({ product, favoriteUser }: ProductInfoProps) => {
-  // Sử dụng hook
   const [visible, setVisible] = useState(false);
 
   const onChange = (value: number | null) => {
     console.log(value);
   };
+  console.log(product);
 
   return (
     <>
@@ -37,7 +31,7 @@ const ProductInfo = ({ product, favoriteUser }: ProductInfoProps) => {
             <div className="flex flex-col gap-5">
               <Image
                 preview={{ visible: false }}
-                src={product?.image?.[0].url}
+                src={product?.images?.[0].url}
                 onClick={() => setVisible(true)}
                 className="border p-2 rounded-lg"
                 width={300}
@@ -50,14 +44,14 @@ const ProductInfo = ({ product, favoriteUser }: ProductInfoProps) => {
                     onVisibleChange: (vis) => setVisible(vis),
                   }}
                 >
-                  {product?.image.map((img) => (
+                  {product?.images.map((img) => (
                     <Image key={img.url} src={img.url} />
                   ))}
                 </Image.PreviewGroup>
               </div>
 
               <div className="flex flex-row gap-3">
-                {product?.image.map((img) => (
+                {product?.images.map((img) => (
                   <Image
                     key={img.url}
                     src={img.url}

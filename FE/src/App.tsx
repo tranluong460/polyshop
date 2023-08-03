@@ -49,17 +49,11 @@ function App() {
   const [currentUser, setCurrentUser] = useState<IUser | null>(null);
 
   useEffect(() => {
-    function fetchUsers() {
-      const user = users.find((user) => user._id === "user1") || null;
-      setCurrentUser(user);
-    }
-
     function fetchCart() {
       setCart(carts);
     }
 
     fetchCart();
-    fetchUsers();
   }, []);
 
   return (

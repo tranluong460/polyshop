@@ -1,6 +1,8 @@
+import jwt from "jsonwebtoken";
+
 import Feedback from "../module/feedBack";
 import User from "../module/auth";
-import jwt from "jsonwebtoken";
+import Comment from "../module/comment";
 
 export const getAll = async (req, res) => {
   try {
@@ -69,6 +71,12 @@ export const create = async (req, res) => {
         message: "Phản hồi bình luận thất bại",
       });
     }
+
+    await Comment.findByIdAndUpdate(
+      req.body.commentId,
+      { $push: { feed_back: data._id } },
+      { new: true }
+    );
 
     return res.status(200).json({
       message: "Phản hồi bình luận thành công",

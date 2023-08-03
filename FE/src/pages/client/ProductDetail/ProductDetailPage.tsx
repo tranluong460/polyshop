@@ -15,6 +15,7 @@ import {
 
 import { IFavoriteUser, IProduct } from "../../../interface";
 import { useGetAllCommentsQuery } from "../../../api/comment";
+import { useGetOneProductsQuery } from "../../../api/products";
 
 type ProductDetailPageProps = {
   favoriteUser: IFavoriteUser[] | undefined;
@@ -29,8 +30,9 @@ const ProductDetailPage = ({
   console.log(data);
   const { id } = useParams<string>();
   const [comment, setComment] = useState("");
+  const { data } = useGetOneProductsQuery(id);
 
-  const product = listProducts && listProducts.find((prod) => prod._id === id);
+  const product = data?.data;
 
   const productSimilar =
     listProducts &&

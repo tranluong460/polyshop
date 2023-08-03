@@ -1,59 +1,30 @@
-import { useState, useEffect } from "react";
-import {
-  Descriptions,
-  Form,
-  Button,
-  Select,
-} from "antd";
+import { Descriptions, Form, Button, Input } from "antd";
 
-
-// Import các interface
 import { ICategoryProduct } from "../../../interface";
+import {
+  useAddCategoriesMutation,
+  useUpdateCategoriesMutation,
+} from "../../../api/categories";
 
-const { Option } = Select;
-
-// Type để truyền dữ liệu giữa các props
-type Props = {
+type CategoriesDrawerProps = {
   cate: ICategoryProduct | undefined;
   isEdit: boolean;
+  isAdd: boolean;
 };
 
-// Khởi tạo component
-const CategoriesDrawer = ({ cate, isEdit }: Props) => {
-  // Sử dụng hook
+const CategoriesDrawer = ({ cate, isEdit, isAdd }: CategoriesDrawerProps) => {
   const [form] = Form.useForm();
-  const [selectedSlug, setSelectedSlug] = useState("");
+  const [addCategories, resultAdd] = useAddCategoriesMutation();
+  const [updateCategories, resultUpdate] = useUpdateCategoriesMutation();
 
   const onFinish = (values: ICategoryProduct) => {
-    console.log("Success:", values);
-  };
-
-  const handleSlugChange = (value: string) => {
-    setSelectedSlug(value);
-  };
-
-  const slug = [
-    { label: "Điện thoại", value: "Phone" },
-    { label: "Máy tính", value: "Laptop" },
-    { label: "Đồng hồ", value: "Watch" },
-  ];
-  
- const brand = {
-    Phone: ["Phone 1", "Phone 2"],
-    Laptop: ["Laptop 1", "Laptop 2", "Laptop 3"],
-    Watch: ["Watch 1", "Watch 2", "Watch 3"],
-  };
-
-  useEffect(() => {
-    if (selectedSlug) {
-      const updatedCategory = {
-        ...form.getFieldValue("category"),
-        slug: selectedSlug,
-        brand: null,
-      };
-      form.setFieldsValue({ category: updatedCategory });
+    if (isEdit) {
+      updateCategories(values);
     }
-  }, [selectedSlug, form]);
+    if (isAdd) {
+      addCategories(values);
+    }
+  };
 
   return (
     <>
@@ -64,6 +35,10 @@ const CategoriesDrawer = ({ cate, isEdit }: Props) => {
         initialValues={cate || {}}
         autoComplete="off"
       >
+        <Form.Item name="_id" hidden>
+          <Input />
+        </Form.Item>
+
         <Descriptions
           extra={
             <Button
@@ -79,21 +54,17 @@ const CategoriesDrawer = ({ cate, isEdit }: Props) => {
           bordered
           column={{ xxl: 2, xl: 2, lg: 2, md: 2, sm: 2, xs: 1 }}
         >
-       <Descriptions.Item label="Danh mục">
+          <Descriptions.Item label="Danh mục">
             <Form.Item
               name="slug"
               rules={[
                 { required: true, message: "Danh mục không được để trống" },
               ]}
             >
-              <Select
-                options={slug}
-                onChange={handleSlugChange}
-                bordered={isEdit}
-                className={`mt-5
-                ${isEdit ? "" : "pointer-events-none"}
-                `}
-                suffixIcon={!isEdit ? null : undefined}
+              <Input
+                bordered={isEdit || isAdd}
+                readOnly={!isEdit || !isAdd}
+                disabled={resultUpdate.isLoading || resultAdd.isLoading}
               />
             </Form.Item>
           </Descriptions.Item>
@@ -105,26 +76,15 @@ const CategoriesDrawer = ({ cate, isEdit }: Props) => {
                 { required: true, message: "Thương hiệu không được để trống" },
               ]}
             >
-              <Select
-                disabled={isEdit && !form.getFieldValue( "slug")}
-                bordered={isEdit}
-                suffixIcon={!isEdit ? null : undefined}
-                className={`mt-5
-                ${isEdit ? "" : "pointer-events-none"}
-                `}
-              >
-                {(brand[form.getFieldValue( "slug")] || []).map(
-                  (item:any) => (
-                    <Option key={item} value={item}>
-                      {item}
-                    </Option>
-                  )
-                )}
-              </Select>
+              <Input
+                bordered={isEdit || isAdd}
+                readOnly={!isEdit || !isAdd}
+                disabled={resultUpdate.isLoading || resultAdd.isLoading}
+              />
             </Form.Item>
           </Descriptions.Item>
-</Descriptions>
-  </Form>
+        </Descriptions>
+      </Form>
     </>
   );
 };

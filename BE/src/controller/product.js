@@ -27,7 +27,20 @@ export const getOne = async (req, res) => {
   try {
     const data = await Product.findById(req.params.id)
       .populate("category")
-      .populate("comments");
+      .populate({
+        path: "comments",
+        populate: [
+          {
+            path: "user",
+          },
+          {
+            path: "feed_back",
+            populate: {
+              path: "user",
+            },
+          },
+        ],
+      });
 
     if (!data || data.length === 0) {
       return res.status(404).json({
