@@ -43,6 +43,7 @@ function App() {
   const { data: categories } = useGetAllCategoriesQuery();
 
   const listProducts = products?.data;
+  console.log(listProducts);
   const listCategories = categories?.data;
 
   const [cart, setCart] = useState<ICart | null>(null);
