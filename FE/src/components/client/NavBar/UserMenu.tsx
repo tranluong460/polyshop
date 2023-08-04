@@ -1,32 +1,21 @@
-// Import các thư viện
 import { Badge } from "antd";
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
-// Import các icon
 import { AiOutlineBell } from "react-icons/ai";
 import { FiShoppingCart } from "react-icons/fi";
 
-// Import các component
 import Avatar from "../Avatar";
 import MenuItem from "./MenuItem";
+import { IUser } from "../../../interface";
 
-// Type để truyền dữ liệu giữa các props
 type UserMenuProps = {
-  isLogin: boolean;
+  currentUser: IUser | null;
   cartCount: number;
   onClick: () => void;
-  imageUser?: string | null;
 };
 
-// Khởi tạo component
-const UserMenu = ({
-  isLogin,
-  imageUser,
-  onClick,
-  cartCount,
-}: UserMenuProps) => {
-  // Sử dụng hook
+const UserMenu = ({ currentUser, onClick, cartCount }: UserMenuProps) => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -65,13 +54,13 @@ const UserMenu = ({
             onClick={toggleOpen}
             className="md:px-4 hover:shadow md:py-1 border-neutral-200 rounded-full cursor-pointer transition"
           >
-            <Avatar src={imageUser} />
+            <Avatar src={currentUser?.image?.url} />
           </div>
 
           {isOpen && (
             <div className="absolute rounded-xl shadow-md w-[40vw] md:w-3/4 bg-white overflow-hidden right-0 top-12 text-sm">
               <div className="flex flex-col cursor-pointer">
-                {isLogin ? (
+                {currentUser ? (
                   <>
                     <MenuItem
                       label="Thông tin cá nhân"

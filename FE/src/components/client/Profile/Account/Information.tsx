@@ -1,19 +1,14 @@
-// Import các thư viện
 import { ChangeEvent, useState } from "react";
 
-// Import các component
 import { Button, Input } from "../../..";
 
-// Import các interface
 import { IUser } from "../../../../interface";
 
-// Type để truyền dữ liệu giữa các props
 type InformationProps = {
   currentUser: IUser | null;
 };
-// Khởi tạo component
+
 const Information = ({ currentUser }: InformationProps) => {
-  // Sử dụng hook
   const [name, setName] = useState(currentUser?.name || "");
   const [email, setEmail] = useState(currentUser?.email || "");
   const [address, setAddress] = useState(currentUser?.address || "");

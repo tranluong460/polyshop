@@ -6,31 +6,23 @@ import {
   CartDrawn,
   Footer,
   Input,
-  Loading,
   Modal,
   NavBar,
 } from "../../components";
 
-import { ICart, ICategoryProduct } from "../../interface";
+import { ICart, ICategoryProduct, IUser } from "../../interface";
 
 type BaseClientProps = {
   cart: ICart | null;
-  isLogin: boolean;
-  imageUser: string | undefined;
+  currentUser: IUser | null;
   listCategories: ICategoryProduct[] | undefined;
 };
 
-const BaseClient = ({
-  isLogin,
-  cart,
-  imageUser,
-  listCategories,
-}: BaseClientProps) => {
+const BaseClient = ({ currentUser, cart, listCategories }: BaseClientProps) => {
   const location = useLocation();
   const [email, setEmail] = useState("");
   const [isOpen, setIsOpen] = useState(true);
   const [openDrawn, setOpenDrawn] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const setDrawn = () => {
     setOpenDrawn(!openDrawn);
@@ -40,12 +32,6 @@ const BaseClient = ({
 
   useEffect(() => {
     window.scrollTo(0, 0);
-
-    setIsLoading(true);
-
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
 
     setOpenDrawn(false);
   }, [location.pathname]);
@@ -83,43 +69,36 @@ const BaseClient = ({
 
   return (
     <>
-      {isLoading ? (
-        <div className="flex items-center justify-center h-screen">
-          <Loading />
-        </div>
-      ) : (
-        <div className="bg-[url(/images/background.avif)] bg-cover bg-fixed bg-center bg-no-repeat">
-          {isHomePage ? (
-            <Modal
-              isOpen={isOpen}
-              body={bodyModal}
-              background={true}
-              onClose={() => setIsOpen(false)}
-            />
-          ) : null}
-
-          <NavBar
-            onOpen={setDrawn}
-            isLogin={isLogin}
-            cartCount={cart?.products.length || 0}
-            listCategories={listCategories}
-            imageUser={imageUser}
+      <div className="bg-[url(/images/background.avif)] bg-cover bg-fixed bg-center bg-no-repeat">
+        {isHomePage ? (
+          <Modal
+            isOpen={isOpen}
+            body={bodyModal}
+            background={true}
+            onClose={() => setIsOpen(false)}
           />
+        ) : null}
 
-          <CartDrawn
-            isOpen={openDrawn}
-            isLogin={isLogin}
-            onClose={setDrawn}
-            cart={cart}
-          />
+        <NavBar
+          onOpen={setDrawn}
+          cartCount={cart?.products.length || 0}
+          listCategories={listCategories}
+          currentUser={currentUser}
+        />
 
-          <main className="pt-36">
-            <Outlet />
-          </main>
+        <CartDrawn
+          isOpen={openDrawn}
+          currentUser={currentUser}
+          onClose={setDrawn}
+          cart={cart}
+        />
 
-          <Footer />
-        </div>
-      )}
+        <main className="pt-36">
+          <Outlet />
+        </main>
+
+        <Footer />
+      </div>
     </>
   );
 };

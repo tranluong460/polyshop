@@ -7,19 +7,17 @@ import UserMenu from "./UserMenu";
 import Container from "../Container";
 import NavBarItem from "./NavBarItem";
 
-import { ICategoryProduct } from "../../../interface";
+import { ICategoryProduct, IUser } from "../../../interface";
 
 type NavBarProps = {
   onOpen: () => void;
   cartCount: number;
-  isLogin: boolean;
-  imageUser?: string | null;
+  currentUser: IUser | null;
   listCategories: ICategoryProduct[] | undefined;
 };
 
 const NavBar = ({
-  imageUser,
-  isLogin,
+  currentUser,
   onOpen,
   cartCount,
   listCategories,
@@ -94,8 +92,7 @@ const NavBar = ({
               </div>
 
               <UserMenu
-                imageUser={imageUser}
-                isLogin={isLogin}
+                currentUser={currentUser}
                 onClick={onOpen}
                 cartCount={cartCount}
               />

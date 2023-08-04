@@ -1,25 +1,19 @@
-// Import các thư viện
 import { Drawer } from "antd";
 import { useNavigate } from "react-router-dom";
 
-// Import các component
 import Button from "../../Button";
 import CartDrawnItem from "./CartDrawnItem";
 
-// Import các interface
-import { ICart } from "../../../interface";
+import { ICart, IUser } from "../../../interface";
 
-// Type để truyền dữ liệu giữa các props
 type CartDrawnProps = {
   isOpen: boolean;
-  isLogin: boolean;
+  currentUser: IUser | null;
   cart: ICart | null;
   onClose: () => void;
 };
 
-// Khởi tạo component
-const CartDrawn = ({ isLogin, isOpen, onClose, cart }: CartDrawnProps) => {
-  // Sử dụng hook
+const CartDrawn = ({ currentUser, isOpen, onClose, cart }: CartDrawnProps) => {
   const navigate = useNavigate();
 
   return (
@@ -64,7 +58,7 @@ const CartDrawn = ({ isLogin, isOpen, onClose, cart }: CartDrawnProps) => {
 
             <Button
               label="Thanh toán"
-              disabled={!isLogin}
+              disabled={!currentUser}
               onClick={() => navigate("/checkout")}
             />
           </div>

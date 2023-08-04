@@ -1,27 +1,51 @@
-// Import các thư viện
 import { useState, ChangeEvent } from "react";
+import { message } from "antd";
 import { useNavigate } from "react-router-dom";
 
-// Import các icon
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 
-// Khởi tạo component
 import { Button, Input } from "../../../components";
+import { useRegisterUserMutation } from "../../../api/auth";
 
-// Khởi tạo component
 const RegisterPage = () => {
-  // Sử dụng hook
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [messageApi, contextHolder] = message.useMessage();
+  const [registerUser, resultRegister] = useRegisterUserMutation();
+
+  const register = () => {
+    const data = {
+      name,
+      email,
+      password,
+      confirmPassword,
+    };
+
+    registerUser(data)
+      .unwrap()
+      .then(() => {
+        navigate("/auth");
+      })
+      .catch((error) => {
+        if (Array.isArray(error.data.message)) {
+          messageApi.error(error.data.message[0]);
+        } else {
+          messageApi.error(error.data.message);
+        }
+      });
+  };
 
   return (
     <>
+      {contextHolder}
+
       <div className="flex justify-center">
-        <div className="bg-black bg-opacity-70 px-16 py-16 self-center mt-2 lg:w-2/5 lg:max-w-md rounded-md w-full">
-          <h2 className="text-white text-4xl mb-8 font-semibold">Đăng ký</h2>
+        <div className="bg-black bg-opacity-70 px-10 py-10 self-center mt-2 lg:w-2/5 lg:max-w-md rounded-md w-full">
+          <h2 className="text-white text-4xl mb-5 font-semibold">Đăng ký</h2>
 
           <div className="flex flex-col gap-4">
             <Input
@@ -53,7 +77,22 @@ const RegisterPage = () => {
                 setPassword(e.target.value)
               }
             />
-            <Button label="Đăng ký" onClick={() => alert("Đăng ký")} />
+
+            <Input
+              type="password"
+              id="confirmPassword"
+              label="ConfirmPassword"
+              value={confirmPassword}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setConfirmPassword(e.target.value)
+              }
+            />
+
+            <Button
+              label="Đăng ký"
+              onClick={register}
+              disabled={resultRegister.isLoading}
+            />
 
             <div className="flex flex-row items-center gap-4 mt-8 justify-center">
               <div

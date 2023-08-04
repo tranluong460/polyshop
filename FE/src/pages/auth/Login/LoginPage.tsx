@@ -1,22 +1,45 @@
-// Import các thư viện
 import { ChangeEvent, useState } from "react";
+import { message } from "antd";
 import { useNavigate } from "react-router-dom";
 
-// Import các icon
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 
-// Import các component
 import { Button, Input } from "../../../components";
+import { useLoginUserMutation } from "../../../api/auth";
 
 const LoginPage = () => {
-  // Sử dụng hook
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [messageApi, contextHolder] = message.useMessage();
+  const [loginUser, resultLogin] = useLoginUserMutation();
+
+  const login = () => {
+    const data = {
+      email,
+      password,
+    };
+
+    loginUser(data)
+      .unwrap()
+      .then((response) => {
+        localStorage.setItem("token", response.token);
+        navigate("/");
+      })
+      .catch((error) => {
+        if (Array.isArray(error.data.message)) {
+          messageApi.error(error.data.message[0]);
+        } else {
+          messageApi.error(error.data.message);
+        }
+      });
+  };
 
   return (
     <>
+      {contextHolder}
+
       <div className="flex justify-center">
         <div className="bg-black bg-opacity-70 px-16 py-16 self-center mt-2 lg:w-2/5 lg:max-w-md rounded-md w-full">
           <h2 className="text-white text-4xl mb-8 font-semibold">Đăng nhập</h2>
@@ -41,7 +64,11 @@ const LoginPage = () => {
                 setPassword(e.target.value)
               }
             />
-            <Button label="Đăng nhập" onClick={() => alert("Đăng nhập")} />
+            <Button
+              label="Đăng nhập"
+              onClick={login}
+              disabled={resultLogin.isLoading}
+            />
 
             <div className="flex flex-row items-center gap-4 mt-8 justify-center">
               <div

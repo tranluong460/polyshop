@@ -1,7 +1,5 @@
-// Import các thư viện
 import { ChangeEvent } from "react";
 
-// Type để truyền dữ liệu giữa các props
 type InputProps = {
   id: string;
   label: string;
@@ -10,7 +8,6 @@ type InputProps = {
   type?: string;
 };
 
-// Khởi tạo component
 const Input = ({ id, onChange, value, label, type }: InputProps) => {
   return (
     <>
