@@ -9,6 +9,8 @@ import AdminCategoryPage from "./admin/AdminCategory/AdminCategoryPage";
 import BaseAuth from "./auth/BaseAuth";
 import LoginPage from "./auth/Login/LoginPage";
 import RegisterPage from "./auth/Register/RegisterPage";
+import ForgotPage from "./auth/Forgot/ForgotPage";
+import ResetPage from "./auth/Reset/ResetPage";
 
 // Trang Client
 import BaseClient from "./client/BaseClient";
@@ -23,8 +25,10 @@ import ProfilePage from "./client/Profile/ProfilePage";
 
 export {
   BaseAdmin,
+  ForgotPage,
   AdminDashboardPage,
   AdminProductPage,
+  ResetPage,
   AdminUserPage,
   BaseAuth,
   AdminCategoryPage,

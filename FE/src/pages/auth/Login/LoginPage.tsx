@@ -54,7 +54,6 @@ const LoginPage = () => {
                 setEmail(e.target.value)
               }
             />
-
             <Input
               type="password"
               id="password"
@@ -69,6 +68,13 @@ const LoginPage = () => {
               onClick={login}
               disabled={resultLogin.isLoading}
             />
+
+            <button
+              onClick={() => navigate("/auth/forgot")}
+              className="text-white hover:text-blue-500"
+            >
+              <p className="text-right">Quên mật khẩu</p>
+            </button>
 
             <div className="flex flex-row items-center gap-4 mt-8 justify-center">
               <div
@@ -85,7 +91,6 @@ const LoginPage = () => {
                 <FaFacebook size={32} />
               </div>
             </div>
-
             <p className="text-neutral-500 mt-12">
               Bạn chưa có tài khoản
               <span

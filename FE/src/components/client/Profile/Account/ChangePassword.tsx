@@ -1,30 +1,90 @@
-// Import các thư viện
-import { Tabs } from "antd";
+import { Tabs, message } from "antd";
 import { useEffect, useState } from "react";
 
-// Import các icon
 import { BiCheckShield } from "react-icons/bi";
 
-// Import các component
 import { Button, Input } from "../../..";
 
-// Import các interface
 import type { TabsProps } from "antd";
+import {
+  useChangePasswordAuthMutation,
+  useCheckCodeAuthMutation,
+  useSendCodeAuthMutation,
+} from "../../../../api/auth";
+import { useNavigate } from "react-router-dom";
 
-// Type để truyền dữ liệu giữa các props
 type ChangePasswordProps = {
   emailUser: string | undefined;
 };
 
-// Khởi tạo component
 const ChangePassword = ({ emailUser }: ChangePasswordProps) => {
-  // Sử dụng hook
+  const navigate = useNavigate();
   const [step, setStep] = useState("1");
   const [code, setCode] = useState("");
-  const [passwordOld, setPasswordOld] = useState("");
-  const [passwordNew, setPasswordNew] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [hidden, setHidden] = useState(false);
   const [disabled, setDisabled] = useState(false);
+
+  const [sendCodeAuth] = useSendCodeAuthMutation();
+  const [checkCodeAuth] = useCheckCodeAuthMutation();
+  const [changePasswordAuth] = useChangePasswordAuthMutation();
+
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const sendCode = () => {
+    const data = {
+      email: emailUser,
+    };
+
+    sendCodeAuth(data)
+      .unwrap()
+      .then((response) => {
+        localStorage.setItem("tokenChange", response.code);
+        setHidden(!hidden);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const checkCode = () => {
+    if (code === "") {
+      messageApi.error("Mã bảo mật không được để trống");
+      return;
+    }
+
+    const data = {
+      code,
+    };
+
+    checkCodeAuth(data)
+      .unwrap()
+      .then((response) => {
+        console.log(response);
+        setStep("2");
+        setDisabled(true);
+      })
+      .catch((error) => {
+        messageApi.error(error.data.message);
+      });
+  };
+
+  const changePassword = () => {
+    const data = { oldPassword, password, confirmPassword };
+
+    changePasswordAuth(data)
+      .unwrap()
+      .then(() => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("tokenChange");
+        navigate("/auth");
+      })
+      .catch((error) => {
+        messageApi.error(error.data.message);
+      });
+  };
 
   const hiddenEmail = (email: string) => {
     if (!email) {
@@ -69,11 +129,7 @@ const ChangePassword = ({ emailUser }: ChangePasswordProps) => {
                     {hiddenEmail(emailUser)}
                   </span>
 
-                  <Button
-                    small
-                    label="Gửi mã"
-                    onClick={() => setHidden(!hidden)}
-                  />
+                  <Button small label="Gửi mã" onClick={sendCode} />
                 </div>
 
                 <div
@@ -90,13 +146,7 @@ const ChangePassword = ({ emailUser }: ChangePasswordProps) => {
                     />
                   </div>
 
-                  <Button
-                    label="Xác nhận"
-                    onClick={() => {
-                      setStep("2");
-                      setDisabled(true);
-                    }}
-                  />
+                  <Button label="Xác nhận" onClick={checkCode} />
                 </div>
               </>
             )}
@@ -112,25 +162,30 @@ const ChangePassword = ({ emailUser }: ChangePasswordProps) => {
         <>
           <div className="flex flex-col gap-3">
             <Input
-              id="passwordOld"
+              id="oldPassword"
               type="password"
-              value={passwordOld}
+              value={oldPassword}
               label="Mật khẩu cũ"
-              onChange={(e) => setPasswordOld(e.target.value)}
+              onChange={(e) => setOldPassword(e.target.value)}
             />
 
             <Input
-              id="passwordNew"
+              id="password"
               type="password"
-              value={passwordNew}
+              value={password}
               label="Mật khẩu mới"
-              onChange={(e) => setPasswordNew(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
             />
 
-            <Button
-              label="Đổi mật khẩu"
-              onClick={() => alert("Đổi mật khẩu")}
+            <Input
+              id="confirmPassword"
+              type="password"
+              value={confirmPassword}
+              label="Mật khẩu mới"
+              onChange={(e) => setConfirmPassword(e.target.value)}
             />
+
+            <Button label="Đổi mật khẩu" onClick={changePassword} />
           </div>
         </>
       ),
@@ -139,6 +194,8 @@ const ChangePassword = ({ emailUser }: ChangePasswordProps) => {
 
   return (
     <>
+      {contextHolder}
+
       <div className="bg-white p-3 py-10 rounded-xl">
         {emailUser ? (
           <Tabs

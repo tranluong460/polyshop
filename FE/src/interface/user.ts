@@ -8,7 +8,7 @@ export interface IUser {
   image: IImageUser;
   cards: ICardUser[];
   order: IOrderUser[];
-  favorite: IFavoriteUser[];
+  favorites: IFavoriteUser[];
   comments: ICommentUser[];
   role: string;
 }

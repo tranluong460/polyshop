@@ -1,24 +1,17 @@
-// Import các thư viện
 import { Outlet, useLocation } from "react-router-dom";
 
-// Import các component
 import { Container, NavProfile } from "../../../components";
 
-// Import dữ liệu, dùng khi chưa có BE
 import { profile } from "../../../data";
 
-// Type để truyền dữ liệu giữa các props
 type ProfilePageProps = {
   nameUser: string | undefined;
   imageUser: string | undefined;
 };
 
-// Khởi tạo component
 const ProfilePage = ({ nameUser, imageUser }: ProfilePageProps) => {
-  // Sử dụng hook
   const location = useLocation();
 
-  // Lấy đường dẫn trang hiện tại
   const path = location.pathname.substring(
     location.pathname.lastIndexOf("/") + 1
   );

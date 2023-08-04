@@ -135,6 +135,12 @@ export const checkCode = async (req, res) => {
   try {
     const { code } = req.body;
 
+    if (!req.headers.authorization) {
+      return res.status(400).json({
+        message: "Kiểm tra thất bại",
+      });
+    }
+
     const codeCheck = req.headers.authorization.split(" ")[1];
     const decoded = jwt.verify(codeCheck, process.env.SECRET_KEY);
 
@@ -162,6 +168,7 @@ export const checkCode = async (req, res) => {
 
 export const changePassword = async (req, res) => {
   const { oldPassword, password, confirmPassword } = req.body;
+
   try {
     const token = req.headers.authorization.split(" ")[1];
 

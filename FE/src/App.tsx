@@ -13,6 +13,7 @@ import {
   CheckoutPage,
   ContactPage,
   FaqPage,
+  ForgotPage,
   HomePage,
   IntroducePage,
   ListProductPage,
@@ -20,6 +21,7 @@ import {
   ProductDetailPage,
   ProfilePage,
   RegisterPage,
+  ResetPage,
 } from "./pages";
 
 import {
@@ -94,7 +96,7 @@ function App() {
               index
               element={
                 <HomePage
-                  favoriteUser={currentUser?.favorite}
+                  favoriteUser={currentUser?.favorites}
                   listProducts={listProducts}
                   listCategories={listCategories}
                 />
@@ -131,7 +133,7 @@ function App() {
                 path="favorite"
                 element={
                   <Favorite
-                    favorites={currentUser?.favorite}
+                    favorites={currentUser?.favorites}
                     listProducts={listProducts}
                   />
                 }
@@ -152,7 +154,7 @@ function App() {
               path="list-product"
               element={
                 <ListProductPage
-                  favoriteUser={currentUser?.favorite}
+                  favoriteUser={currentUser?.favorites}
                   listProducts={listProducts}
                   listCategories={listCategories}
                 />
@@ -162,7 +164,7 @@ function App() {
               path="product-detail/:id"
               element={
                 <ProductDetailPage
-                  favoriteUser={currentUser?.favorite}
+                  favoriteUser={currentUser?.favorites}
                   listProducts={listProducts}
                 />
               }
@@ -172,6 +174,11 @@ function App() {
           <Route path="/auth" element={<BaseAuth />}>
             <Route index element={<LoginPage />} />
             <Route path="register" element={<RegisterPage />} />
+            <Route path="forgot" element={<ForgotPage />} />
+            <Route
+              path="reset-password/:randomString"
+              element={<ResetPage />}
+            />
           </Route>
 
           <Route path="/admin" element={<BaseAdmin />}>
