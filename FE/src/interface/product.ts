@@ -23,6 +23,7 @@ export interface ICommentsProduct {
   user: IUserCommentProduct;
   stars: number;
   comment: string;
+  product: any;
   prefer: number;
   feed_back: IFeedBackComment[];
 }

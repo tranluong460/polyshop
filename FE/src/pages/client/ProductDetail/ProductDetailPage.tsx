@@ -14,7 +14,7 @@ import {
 } from "../../../components";
 
 import { IFavoriteUser, IProduct } from "../../../interface";
-import { useGetAllCommentsQuery } from "../../../api/comment";
+import { useGetAllCommentsQuery, useGetCommentByIdProQuery } from "../../../api/comment";
 import { useGetOneProductsQuery } from "../../../api/products";
 
 type ProductDetailPageProps = {
@@ -26,17 +26,17 @@ const ProductDetailPage = ({
   favoriteUser,
   listProducts,
 }: ProductDetailPageProps) => {
-  const { data: comments } = useGetAllCommentsQuery()
-  console.log(comments);
+  // console.log(comments);
   const { id } = useParams<string>();
   const [comment, setComment] = useState("");
+  const { data: comments } = useGetCommentByIdProQuery(id!)
   const { data } = useGetOneProductsQuery(id!);
 
   const product = data?.data;
-  // console.log(product);
+  // console.log(comments?.data);
   const productSimilar =
     listProducts &&
-    listProducts.filter((prod) => prod.category._id === product?.category._id);
+    listProducts.filter((prod) => prod.category?._id === product?.category?._id);
 
   const items: TabsProps["items"] = [
     {
@@ -56,8 +56,8 @@ const ProductDetailPage = ({
         </>
       ),
       children:
-        product && product.comments.length > 0 ? (
-          <ProductComment comments={product.comments} />
+        product ? (
+          <ProductComment comments={comments?.data} />
         ) : (
           <>
             <div className="text-center p-10">

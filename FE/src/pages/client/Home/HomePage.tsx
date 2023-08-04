@@ -31,7 +31,7 @@ const HomePage = ({
 
       listCategories.forEach((category) => {
         const filteredProducts = listProducts.filter(
-          (product) => product.category.slug === category.slug
+          (product) => product.category?.slug === category?.slug
         );
 
         initialProductsBySlug[category.slug] = filteredProducts;

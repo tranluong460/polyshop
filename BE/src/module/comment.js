@@ -10,9 +10,13 @@ const commentSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    product: {
+      type: mongoose.Types.ObjectId,
+      ref: "Product",
+    },
     stars: {
       type: Number,
-      required: true,
+      default: 0,
     },
     prefer: {
       type: Number,

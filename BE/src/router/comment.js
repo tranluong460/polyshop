@@ -5,9 +5,9 @@ import { create, getAll, update, del, getOne } from "../controller/comment";
 const router = express.Router();
 
 router.get("/", getAll);
-router.get("/", getOne);
-router.post("/", create);
+router.get("/:id", getOne);
+router.post("/:id", create);
 router.patch("/:id", update);
-router.delete("/", del);
+router.delete("/:id", del);
 
 export default router;

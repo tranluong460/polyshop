@@ -47,7 +47,7 @@ function App() {
   const token = localStorage.getItem("token");
 
   const listProducts = products?.data;
-  console.log(listProducts);
+  // console.log(listProducts);
   const listCategories = categories?.data;
 
   const [cart, setCart] = useState<ICart | null>(null);

@@ -1,31 +1,42 @@
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import React, { useState } from "react";
-import { Avatar, List, Space, Rate } from "antd";
+import { Avatar, List, Space, Rate, Form, Button, Input } from "antd";
 
-import { AiFillLike, AiFillMessage } from "react-icons/ai";
+import { AiFillLike, AiFillMessage, AiOutlineDelete } from "react-icons/ai";
 
-import { Button } from "../../..";
+// import { Button } from "../../..";
 import { ICommentsProduct } from "../../../../interface";
+import { useAddCommentByIdProMutation, useDeleteCommentByIdMutation } from "../../../../api/comment";
+import { useGetUserByTokenMutation } from "../../../../api/auth";
 
 type ProductCommentProps = {
   comments: ICommentsProduct[];
 };
 
 const ProductComment = ({ comments }: ProductCommentProps) => {
+  // console.log(comments)
   const [isFeedback, setIsFeedback] = useState(false);
   const [selectedCommentId, setSelectedCommentId] = useState<
     string | undefined
   >("");
-  const [comment, setComment] = useState("");
+  // const [comment, setComment] = useState("");
   const [feedBack, setFeedback] = useState("");
-
-  const listComment = comments.map((cmt) => ({
+  const [addComment, { isLoading }] = useAddCommentByIdProMutation()
+  const [removeComment] = useDeleteCommentByIdMutation()
+  const [verifyToken] = useGetUserByTokenMutation();
+  const token = localStorage.getItem("token")
+  const user = verifyToken(token)
+  console.log(user);
+  // console.log(token);
+  const { id } = useParams<string>()
+  console.log();
+  const listComment = comments?.map((cmt) => ({
     href: "/profile",
     _id: cmt._id,
     prefer: cmt.prefer,
     feed_back: cmt.feed_back,
-    title: cmt.user.name,
-    avatar: cmt.user.image,
+    title: cmt.user?.name,
+    avatar: cmt.user?.image,
     description: (
       <Rate
         allowHalf
@@ -36,14 +47,23 @@ const ProductComment = ({ comments }: ProductCommentProps) => {
     ),
     content: cmt.comment,
   }));
+  // console.log(listComment);
+  const [form] = Form.useForm();
 
-  const IconText = ({ icon, text }: { icon: React.FC; text: number }) => (
+  const onFinish = (values: any) => {
+    addComment({ ...values, product: id })
+    form.resetFields(['comment']);
+  };
+  const IconText = ({ icon, text }: { icon: React.FC; text?: number }) => (
     <Space className="hover:text-rose-300 text-base">
       {React.createElement(icon)}
       {text}
     </Space>
   );
-
+  const handleIconClick = (id: any) => {
+    // Xử lý khi người dùng nhấp vào icon
+    removeComment(id);
+  };
   return (
     <>
       <List
@@ -61,25 +81,39 @@ const ProductComment = ({ comments }: ProductCommentProps) => {
                 Bình luận
               </label>
 
-              <textarea
-                id="comment"
-                value={comment}
-                rows={5}
-                required
-                placeholder={"Nhập bình luận của bạn ..."}
-                onChange={(e) => setComment(e.target.value)}
-                className="px-0 w-full text-sm text-gray-900 border-0 pt-3 focus:ring-0 focus:outline-none"
-              />
+              <Form
+                form={form}
+                onFinish={onFinish}
+                initialValues={{ residence: ['zhejiang', 'hangzhou', 'xihu'], prefix: '86' }}
+                className="w-full"
+                scrollToFirstError
+              >
+
+
+                <Form.Item
+                  name="comment"
+                  label="Nội dung bình luận"
+                  rules={[{ required: true, message: 'Bình luận không được để trống' }]}
+                >
+                  <Input.TextArea showCount maxLength={100} />
+                </Form.Item>
+                <Form.Item>
+                  <Button type="primary" danger htmlType="submit">
+                    Bình luận
+                  </Button>
+                </Form.Item>
+              </Form>
             </div>
 
-            <div className="flex justify-center">
+            {/* <div className="flex justify-center">
               <div>
-                <Button label="Bình luận" onClick={() => alert("Bình luận")} />
+                <Button label="Bình luận" onClick={() => addComment({ comment: comment, product: id })} />
               </div>
-            </div>
+            </div> */}
           </>
         }
-        renderItem={(item) => (
+        renderItem={(item: any) => (
+
           <>
             <List.Item
               key={item.title}
@@ -107,6 +141,7 @@ const ProductComment = ({ comments }: ProductCommentProps) => {
                   text={item.feed_back.length || 0}
                   key="list-vertical-message"
                 />,
+                <AiOutlineDelete onClick={() => handleIconClick(item._id)} />,
               ]}
             >
               <List.Item.Meta
@@ -116,7 +151,7 @@ const ProductComment = ({ comments }: ProductCommentProps) => {
               />
               <p className="text-medium">{item.content}</p>
 
-              {item.feed_back.map((feedback) => (
+              {item.feed_back.map((feedback: any) => (
                 <List.Item
                   key={feedback._id}
                   actions={[
@@ -160,10 +195,10 @@ const ProductComment = ({ comments }: ProductCommentProps) => {
 
                       <div className="flex justify-center">
                         <div>
-                          <Button
+                          {/* <Button
                             label="Phản hồi"
                             onClick={() => alert(item._id)}
-                          />
+                          /> */}
                         </div>
                       </div>
                     </div>

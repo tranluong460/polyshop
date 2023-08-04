@@ -21,7 +21,7 @@ const ProductInfo = ({ product, favoriteUser }: ProductInfoProps) => {
   const onChange = (value: number | null) => {
     console.log(value);
   };
-  console.log(product);
+  // console.log(product);
 
   return (
     <>
