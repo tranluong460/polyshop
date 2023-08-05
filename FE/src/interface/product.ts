@@ -24,6 +24,7 @@ export interface ICommentsProduct {
   stars: number;
   comment: string;
   product: any;
+  userId: string;
   prefer: number;
   feed_back: IFeedBackComment[];
 }

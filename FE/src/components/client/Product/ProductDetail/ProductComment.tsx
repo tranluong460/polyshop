@@ -1,11 +1,11 @@
 import { Link, useParams } from "react-router-dom";
-import React, { useState } from "react";
-import { Avatar, List, Space, Rate, Form, Button, Input } from "antd";
+import React, { useEffect, useState } from "react";
+import { Avatar, List, Space, Rate, Form, Button, Input, message, Popconfirm } from "antd";
 
 import { AiFillLike, AiFillMessage, AiOutlineDelete } from "react-icons/ai";
 
 // import { Button } from "../../..";
-import { ICommentsProduct } from "../../../../interface";
+import { ICommentsProduct, IUser } from "../../../../interface";
 import { useAddCommentByIdProMutation, useDeleteCommentByIdMutation } from "../../../../api/comment";
 import { useGetUserByTokenMutation } from "../../../../api/auth";
 
@@ -24,9 +24,21 @@ const ProductComment = ({ comments }: ProductCommentProps) => {
   const [addComment, { isLoading }] = useAddCommentByIdProMutation()
   const [removeComment] = useDeleteCommentByIdMutation()
   const [verifyToken] = useGetUserByTokenMutation();
-  const token = localStorage.getItem("token")
-  const user = verifyToken(token)
-  console.log(user);
+  const token = localStorage.getItem("token");
+  const [user, setUser] = useState<IUser | null>()
+  useEffect(() => {
+    if (token) {
+      verifyToken(token)
+        .unwrap()
+        .then((response) => {
+          setUser(response?.data);
+        })
+        .catch((error) => {
+          message.error(error.data.message);
+        });;
+    }
+  }, [token]);
+  // console.log(user);
   // console.log(token);
   const { id } = useParams<string>()
   console.log();
@@ -37,6 +49,7 @@ const ProductComment = ({ comments }: ProductCommentProps) => {
     feed_back: cmt.feed_back,
     title: cmt.user?.name,
     avatar: cmt.user?.image,
+    userId: cmt.user?._id,
     description: (
       <Rate
         allowHalf
@@ -62,8 +75,10 @@ const ProductComment = ({ comments }: ProductCommentProps) => {
   );
   const handleIconClick = (id: any) => {
     // Xử lý khi người dùng nhấp vào icon
+
     removeComment(id);
   };
+  // console.log(user);
   return (
     <>
       <List
@@ -141,7 +156,21 @@ const ProductComment = ({ comments }: ProductCommentProps) => {
                   text={item.feed_back.length || 0}
                   key="list-vertical-message"
                 />,
-                <AiOutlineDelete onClick={() => handleIconClick(item._id)} />,
+                user?._id == item?.userId &&
+
+                <Popconfirm
+                  className="mt-[-30px]"
+                  placement="topLeft"
+                  title="Bạn có muốn xóa bình luận không"
+                  onConfirm={() => handleIconClick(item._id)}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <IconText
+                    icon={AiOutlineDelete}
+                    key="list-vertical-message"
+                  />,
+                </Popconfirm>
               ]}
             >
               <List.Item.Meta

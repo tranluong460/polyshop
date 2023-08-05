@@ -78,13 +78,13 @@ export const create = async (req, res) => {
 
     const newComment = await Comment.create({
       ...req.body,
-      product: req.params.id,
+      // product: req.params.id,
       user: decoded.id,
       comment: req.body.comment,
     });
 
     await Product.findByIdAndUpdate(
-      req.body.product,
+      req.params.id,
       { $push: { comments: newComment._id } },
       { new: true }
     );
