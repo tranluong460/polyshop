@@ -1,13 +1,16 @@
 import express from "express";
 
 import { create, getAll, update, del, getOne } from "../controller/comment";
+import { loginMiddleware } from "../middleware/loginPermission";
 
 const router = express.Router();
 
 router.get("/", getAll);
 router.get("/:id", getOne);
-router.post("/:id", create);
-router.patch("/:id", update);
-router.delete("/:id", del);
+
+router.post("/", loginMiddleware, create);
+router.patch("/:id", loginMiddleware, update);
+router.delete("/", loginMiddleware, del);
+
 
 export default router;

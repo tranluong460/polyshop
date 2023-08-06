@@ -15,7 +15,7 @@ export const getAll = async (req, res) => {
 
     if (!data || data.length === 0) {
       return res.status(200).json({
-        message: "Không có dữ liệu bình luận",
+        message: "Không có danh sách",
       });
     }
 
@@ -58,14 +58,6 @@ export const getOne = async (req, res) => {
 
 export const create = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split(" ")[1];
-
-    if (!token) {
-      return res.status(401).json({
-        message: "Bạn chưa đăng nhập",
-      });
-    }
-
     const { error } = commentSchema.validate(req.body, { abortEarly: false });
     if (error) {
       const errors = error.details.map((err) => err.message);
@@ -74,12 +66,10 @@ export const create = async (req, res) => {
       });
     }
 
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
-
     const newComment = await Comment.create({
       ...req.body,
-      // product: req.params.id,
-      user: decoded.id,
+
+      user: req.user._id,
       comment: req.body.comment,
     });
 
@@ -90,27 +80,17 @@ export const create = async (req, res) => {
     );
 
     await User.findByIdAndUpdate(
-      req.body.user,
+      req.user._id,
       { $push: { comments: newComment._id } },
       { new: true }
     );
 
     return res.status(201).json({
       message: "Thêm bình luận thành công",
-      newComment,
     });
   } catch (err) {
-    console.error(err);
+    console.log(err);
 
-    if (err.name === "TokenExpiredError") {
-      const expiredAt = err.expiredAt;
-      return res.status(401).json({
-        message: "Token đã hết hạn",
-        expiredAt: expiredAt,
-      });
-    }
-
-    // Thông báo cho client khi có lỗi xảy ra
     return res.status(500).json({
       message: "Đã có lỗi xảy ra khi bình luận",
     });
@@ -176,18 +156,9 @@ export const del = async (req, res) => {
   try {
     const commentId = req.params.id;
 
-    const token = req.headers.authorization?.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
-
-    if (!token) {
-      return res.status(401).json({
-        message: "Bạn cần đăng nhập để xóa bình luận",
-      });
-    }
-
     const comment = await Comment.findById(commentId);
 
-    if (comment && comment.user.toString() === decoded.id) {
+    if (comment && comment.user.toString() === req.user._id) {
       await Comment.findByIdAndDelete(commentId);
 
       await User.updateMany(
@@ -200,23 +171,15 @@ export const del = async (req, res) => {
         { $pull: { comments: commentId } }
       );
 
-      return res
-        .status(200)
-        .json({ message: "Bình luận đã được xóa thành công" });
+      return res.status(200).json({
+        message: "Bình luận đã được xóa thành công",
+      });
     } else {
-      return res
-        .status(403)
-        .json({ message: "Bạn không có quyền xóa bình luận này" });
-    }
-  } catch (error) {
-    if (err.name === "TokenExpiredError") {
-      const expiredAt = err.expiredAt;
-      return res.status(401).json({
-        message: "Token đã hết hạn",
-        expiredAt: expiredAt,
+      return res.status(403).json({
+        message: "Bạn không có quyền xóa bình luận này",
       });
     }
-
+  } catch (error) {
     return res.status(500).json({
       message: "Đã có lỗi xảy ra khi cập nhật bình luận " + error.message,
     });

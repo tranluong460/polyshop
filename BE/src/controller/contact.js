@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 import Contact from "../module/contact";
 
 import { sendContact } from "../middleware/sendMail";
-
 import { contactSchema } from "../validators/contact";
 
 dotenv.config();
@@ -33,4 +32,5 @@ const create = async (req, res) => {
     });
   }
 };
+
 export { create };

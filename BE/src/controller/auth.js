@@ -72,7 +72,9 @@ export const register = async (req, res) => {
 
     const email = await Auth.findOne({ email: req.body.email });
     if (email) {
-      return res.status(404).json({ message: "Email đã tồn tại" });
+      return res.status(404).json({
+        message: "Email đã tồn tại",
+      });
     }
 
     const passwordHash = await bcrypt.hash(req.body.password, 12);
@@ -113,7 +115,9 @@ export const register = async (req, res) => {
   } catch (error) {
     console.log(error);
 
-    return res.status(500).json({ message: "Lỗi server: " + error.message });
+    return res.status(500).json({
+      message: "Lỗi server: " + error.message,
+    });
   }
 };
 
@@ -121,8 +125,29 @@ export const verify = async (req, res) => {
   const { randomCode, randomString } = req.body;
 
   try {
+    if (!req.headers.authorization) {
+      return res.status(401).json({
+        message: "Bạn chưa đăng nhập",
+      });
+    }
+
     const token = req.headers.authorization.split(" ")[1];
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
+
+    const email = decoded.email;
+
+    const user = await Auth.findOne({ email });
+    if (!user) {
+      return res.status(500).json({
+        message: "Không tìm thấy người dùng",
+      });
+    }
+
+    if (user.isVerifyEmail) {
+      return res.status(400).json({
+        message: "Email đã được kích hoạt",
+      });
+    }
 
     if (
       randomCode !== decoded.randomCode ||
@@ -130,14 +155,6 @@ export const verify = async (req, res) => {
     ) {
       return res.status(500).json({
         message: "Mã xác minh không chính xác",
-      });
-    }
-    const email = decoded.email;
-
-    const user = await Auth.findOne({ email });
-    if (!user) {
-      return res.status(500).json({
-        message: "Không tìm thấy người dùng",
       });
     }
 

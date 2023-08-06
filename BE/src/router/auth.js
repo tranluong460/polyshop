@@ -10,14 +10,16 @@ import {
 } from "../controller/auth";
 
 import { checkPermission } from "../middleware/checkPermission";
+import { loginMiddleware } from "../middleware/loginPermission";
 
 const router = express.Router();
 
 router.get("/", checkPermission, getAll);
-router.get("/:id", getOne);
+router.get("/:id", checkPermission, getOne);
+
 router.post("/login", logIn);
-router.post("/verify", verify);
 router.post("/register", register);
-router.post("/get-user-token", getUserByToken);
+router.post("/verify", verify);
+router.post("/get-user-token", loginMiddleware, getUserByToken);
 
 export default router;

@@ -1,22 +1,16 @@
-// Import các thư viện
 import { useEffect, useState } from "react";
 import { message, notification } from "antd";
 
-// Import các icon
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 
-// Import các interface
 import { IFavoriteUser } from "../../../interface";
 
-// Type để truyền dữ liệu giữa các props
 type HeartButtonProps = {
   productId: string | undefined;
   favoriteUser: IFavoriteUser[] | undefined;
 };
 
-// Khởi tạo component
 const HeartButton = ({ productId, favoriteUser }: HeartButtonProps) => {
-  // Sử dụng hook
   const [hasFavorite, setHasFavorite] = useState(false);
 
   const [api, contextHolder] = notification.useNotification();
@@ -46,10 +40,8 @@ const HeartButton = ({ productId, favoriteUser }: HeartButtonProps) => {
   useEffect(() => {
     let isFavorite = false;
 
-    if (favoriteUser && favoriteUser) {
-      isFavorite = favoriteUser.some(
-        (favorite) => favorite.productId === productId
-      );
+    if (favoriteUser) {
+      isFavorite = favoriteUser.some((item) => item === productId);
     }
 
     setHasFavorite(isFavorite || false);

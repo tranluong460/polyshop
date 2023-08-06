@@ -3,7 +3,7 @@ import CategoryRouter from "./category";
 import ChangePassword from "./changePassword";
 import CommentRouter from "./comment";
 import ContactRouter from "./contact";
-import FavoriteRouter from "./favorites";
+import FavoriteRouter from "./favorite";
 import OrderRouter from "./order";
 import ProductRouter from "./product";
 import CardRouter from "./card";

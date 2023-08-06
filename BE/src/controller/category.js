@@ -8,7 +8,7 @@ export const getAll = async (req, res) => {
 
     if (!data || data.length === 0) {
       return res.status(404).json({
-        message: "Không có dữ liệu",
+        message: "Không có danh sách",
       });
     }
 
@@ -29,7 +29,7 @@ export const getOne = async (req, res) => {
 
     if (!data || data.length === 0) {
       return res.status(404).json({
-        message: "Không tìm thấy danh mục",
+        message: "Không có thông tin",
       });
     }
 
@@ -85,7 +85,6 @@ export const remove = async (req, res) => {
 
     return res.status(200).json({
       message: "Xóa danh mục thành công ",
-      data: data,
     });
   } catch (error) {
     return res.status(500).json({

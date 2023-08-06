@@ -1,4 +1,5 @@
 import Product from "../module/products";
+import Category from "../module/category";
 
 import { productSchema } from "../validators/product";
 
@@ -8,7 +9,7 @@ export const getAll = async (req, res) => {
 
     if (!data || data.length === 0) {
       return res.status(404).json({
-        message: "Không có dữ liệu sản phẩm",
+        message: "Không có dữ liệu",
       });
     }
 
@@ -44,7 +45,7 @@ export const getOne = async (req, res) => {
 
     if (!data || data.length === 0) {
       return res.status(404).json({
-        message: "Không tìm thấy sản phẩm",
+        message: "Không có thông tin",
       });
     }
 
@@ -67,6 +68,13 @@ export const create = async (req, res) => {
       const errors = error.details.map((err) => err.message);
       return res.status(400).json({
         message: errors,
+      });
+    }
+
+    const checkCategory = await Category.findById(req.body.category);
+    if (!checkCategory) {
+      return res.status(400).json({
+        message: "Danh mục không tồn tại",
       });
     }
 
@@ -101,7 +109,6 @@ export const remove = async (req, res) => {
 
     return res.status(200).json({
       message: "Xóa sản phẩm thành công ",
-      data: data,
     });
   } catch (error) {
     return res.status(500).json({
@@ -118,6 +125,13 @@ export const update = async (req, res) => {
       const errors = error.details.map((err) => err.message);
       return res.status(400).json({
         message: errors,
+      });
+    }
+
+    const checkCategory = await Category.findById(req.body.category);
+    if (!checkCategory) {
+      return res.status(400).json({
+        message: "Danh mục không tồn tại",
       });
     }
 

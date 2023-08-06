@@ -13,6 +13,13 @@ export const create = async (req, res) => {
       });
     }
 
+    const checkVoucher = await Voucher.findOne({ code: req.body.code });
+    if (checkVoucher) {
+      return res.status(404).json({
+        message: "Mã code đã tồn tại",
+      });
+    }
+
     const data = await Voucher.create(req.body);
 
     if (!data) {
@@ -37,8 +44,8 @@ export const getAll = async (req, res) => {
     const vouchers = await Voucher.find();
 
     if (!vouchers || vouchers.length === 0) {
-      res.status(404).json({
-        message: "Không có danh sách voucher",
+      return res.status(404).json({
+        message: "Không có danh sách",
       });
     }
     res.status(200).json({
@@ -58,7 +65,7 @@ export const getOne = async (req, res) => {
 
     if (!data) {
       return res.status(404).json({
-        message: "Không tìm thấy voucher",
+        message: "Không có thông tin",
       });
     }
 

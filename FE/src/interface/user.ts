@@ -8,7 +8,7 @@ export interface IUser {
   image: IImageUser;
   cards: ICardUser[];
   order: IOrderUser[];
-  favorites: IFavoriteUser[];
+  favorites: string[];
   comments: ICommentUser[];
   role: string;
 }
@@ -47,12 +47,6 @@ export interface IProductsOrderUser {
   name: string;
   price: number;
   quantity: number;
-}
-
-export interface IFavoriteUser {
-  _id?: string;
-  userId: string;
-  productId: string;
 }
 
 export interface ICommentUser {
