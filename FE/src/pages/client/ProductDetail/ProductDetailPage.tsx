@@ -14,7 +14,6 @@ import {
 } from "../../../components";
 
 import { IFavoriteUser, IProduct } from "../../../interface";
-import { useGetAllCommentsQuery, useGetCommentByIdProQuery } from "../../../api/comment";
 import { useGetOneProductsQuery } from "../../../api/products";
 
 type ProductDetailPageProps = {
@@ -29,11 +28,10 @@ const ProductDetailPage = ({
   // console.log(comments);
   const { id } = useParams<string>();
   const [comment, setComment] = useState("");
-  const { data: comments } = useGetCommentByIdProQuery(id!)
   const { data } = useGetOneProductsQuery(id!);
 
   const product = data?.data;
-  // console.log(comments?.data);
+  console.log(product);
   const productSimilar =
     listProducts &&
     listProducts.filter((prod) => prod.category?._id === product?.category?._id);
@@ -57,7 +55,7 @@ const ProductDetailPage = ({
       ),
       children:
         product ? (
-          <ProductComment comments={comments?.data} />
+          <ProductComment comments={product?.comments} />
         ) : (
           <>
             <div className="text-center p-10">

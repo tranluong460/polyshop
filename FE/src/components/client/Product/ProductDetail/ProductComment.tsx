@@ -4,10 +4,11 @@ import { Avatar, List, Space, Rate, Form, Button, Input, message, Popconfirm } f
 
 import { AiFillLike, AiFillMessage, AiOutlineDelete } from "react-icons/ai";
 
-// import { Button } from "../../..";
+import { Button as Btn } from "../../..";
 import { ICommentsProduct, IUser } from "../../../../interface";
 import { useAddCommentByIdProMutation, useDeleteCommentByIdMutation } from "../../../../api/comment";
 import { useGetUserByTokenMutation } from "../../../../api/auth";
+import { useAddFeedbackMutation, useRemoveFeedbackMutation } from "../../../../api/feedback";
 
 type ProductCommentProps = {
   comments: ICommentsProduct[];
@@ -21,9 +22,12 @@ const ProductComment = ({ comments }: ProductCommentProps) => {
   >("");
   // const [comment, setComment] = useState("");
   const [feedBack, setFeedback] = useState("");
-  const [addComment, { isLoading }] = useAddCommentByIdProMutation()
+  const [addComment] = useAddCommentByIdProMutation()
   const [removeComment] = useDeleteCommentByIdMutation()
   const [verifyToken] = useGetUserByTokenMutation();
+  const [addFeeback] = useAddFeedbackMutation()
+  const [deleFeeback] = useRemoveFeedbackMutation()
+
   const token = localStorage.getItem("token");
   const [user, setUser] = useState<IUser | null>()
   useEffect(() => {
@@ -38,7 +42,7 @@ const ProductComment = ({ comments }: ProductCommentProps) => {
         });;
     }
   }, [token]);
-  // console.log(user);
+  console.log(user?._id);
   // console.log(token);
   const { id } = useParams<string>()
   console.log();
@@ -60,10 +64,11 @@ const ProductComment = ({ comments }: ProductCommentProps) => {
     ),
     content: cmt.comment,
   }));
-  // console.log(listComment);
+  console.log(listComment);
   const [form] = Form.useForm();
 
   const onFinish = (values: any) => {
+    // console.log(values);
     addComment({ ...values, product: id })
     form.resetFields(['comment']);
   };
@@ -75,10 +80,10 @@ const ProductComment = ({ comments }: ProductCommentProps) => {
   );
   const handleIconClick = (id: any) => {
     // Xử lý khi người dùng nhấp vào icon
-
-    removeComment(id);
+    // console.log(id);
+    console.log(removeComment({ id }));
   };
-  // console.log(user);
+  console.log(user);
   return (
     <>
       <List
@@ -103,12 +108,18 @@ const ProductComment = ({ comments }: ProductCommentProps) => {
                 className="w-full"
                 scrollToFirstError
               >
+                <Form.Item
+                  name="stars"
+                  label="Đánh giá sao"
+                  rules={[{ required: true, message: 'Đánh giá sao không được để trống' }]}
 
-
+                >
+                  <Rate />
+                </Form.Item>
                 <Form.Item
                   name="comment"
                   label="Nội dung bình luận"
-                  rules={[{ required: true, message: 'Bình luận không được để trống' }]}
+                  rules={[{ required: true, message: 'Nội dung bình luận không được để trống' }]}
                 >
                   <Input.TextArea showCount maxLength={100} />
                 </Form.Item>
@@ -120,11 +131,7 @@ const ProductComment = ({ comments }: ProductCommentProps) => {
               </Form>
             </div>
 
-            {/* <div className="flex justify-center">
-              <div>
-                <Button label="Bình luận" onClick={() => addComment({ comment: comment, product: id })} />
-              </div>
-            </div> */}
+
           </>
         }
         renderItem={(item: any) => (
@@ -162,7 +169,7 @@ const ProductComment = ({ comments }: ProductCommentProps) => {
                   className="mt-[-30px]"
                   placement="topLeft"
                   title="Bạn có muốn xóa bình luận không"
-                  onConfirm={() => handleIconClick(item._id)}
+                  onConfirm={() => handleIconClick(item?._id)}
                   okText="Yes"
                   cancelText="No"
                 >
@@ -189,6 +196,21 @@ const ProductComment = ({ comments }: ProductCommentProps) => {
                       text={feedback.prefer || 0}
                       key="list-vertical-like-o"
                     />,
+                    user?._id == feedback?.user?._id &&
+
+                    <Popconfirm
+                      className="mt-[-30px]"
+                      placement="topLeft"
+                      title="Bạn có muốn xóa phản hồi không"
+                      onConfirm={() => deleFeeback(feedback?._id)}
+                      okText="Yes"
+                      cancelText="No"
+                    >
+                      <IconText
+                        icon={AiOutlineDelete}
+                        key="list-vertical-message"
+                      />,
+                    </Popconfirm>
                   ]}
                 >
                   <List.Item.Meta
@@ -197,6 +219,7 @@ const ProductComment = ({ comments }: ProductCommentProps) => {
                   />
                   {feedback.comment}
                 </List.Item>
+
               ))}
 
               <div className="mt-4">
@@ -224,10 +247,10 @@ const ProductComment = ({ comments }: ProductCommentProps) => {
 
                       <div className="flex justify-center">
                         <div>
-                          {/* <Button
+                          <Btn
                             label="Phản hồi"
-                            onClick={() => alert(item._id)}
-                          /> */}
+                            onClick={() => addFeeback({ comment: feedBack, commentId: item._id })}
+                          />
                         </div>
                       </div>
                     </div>

@@ -24,7 +24,7 @@ export const commentApi = createApi({
     }),
     addCommentByIdPro: biulder.mutation<any, any>({
       query: (pro) => ({
-        url: `/comment/${pro.product}`,
+        url: `/comment`,
         method: "POST",
         body: pro,
       }),
@@ -32,8 +32,9 @@ export const commentApi = createApi({
     }),
     deleteCommentById: biulder.mutation<any, any>({
       query: (id) => ({
-        url: `/comment/${id}`,
+        url: `/comment`,
         method: "DELETE",
+        body: id,
       }),
       invalidatesTags: ["Comment"],
     }),

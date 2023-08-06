@@ -1,6 +1,7 @@
 import Feedback from "../module/feedBack";
 import User from "../module/auth";
 import Comment from "../module/comment";
+import { FeedbackSchema } from "../validators/feedback";
 
 export const getAll = async (req, res) => {
   try {
@@ -46,6 +47,14 @@ export const getOne = async (req, res) => {
 
 export const create = async (req, res) => {
   try {
+    const { error } = FeedbackSchema.validate(req.body, { abortEarly: false });
+
+    if (error) {
+      const errors = error.details.map((err) => err.message);
+      return res.status(400).json({
+        message: errors,
+      });
+    }
     const user = await User.findById(req.user._id);
 
     const checkComment = await Comment.findById(req.body.commentId);
@@ -122,6 +131,14 @@ export const remove = async (req, res) => {
 
 export const update = async (req, res) => {
   try {
+    const { error } = FeedbackSchema.validate(req.body, { abortEarly: false });
+
+    if (error) {
+      const errors = error.details.map((err) => err.message);
+      return res.status(400).json({
+        message: errors,
+      });
+    }
     const feed_back = await Feedback.findById(req.params.id);
 
     if (!feed_back.user.equals(req.user._id)) {

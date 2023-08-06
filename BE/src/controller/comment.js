@@ -74,7 +74,7 @@ export const create = async (req, res) => {
     });
 
     await Product.findByIdAndUpdate(
-      req.params.id,
+      req.body.product,
       { $push: { comments: newComment._id } },
       { new: true }
     );
@@ -154,11 +154,10 @@ export const update = async (req, res) => {
 
 export const del = async (req, res) => {
   try {
-    const commentId = req.params.id;
+    const commentId = req.body.id;
 
     const comment = await Comment.findById(commentId);
-
-    if (comment && comment.user.toString() === req.user._id) {
+    if (comment && comment.user.toString() == req.user._id) {
       await Comment.findByIdAndDelete(commentId);
 
       await User.updateMany(
