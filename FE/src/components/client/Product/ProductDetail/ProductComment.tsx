@@ -83,6 +83,10 @@ const ProductComment = ({ comments }: ProductCommentProps) => {
     // console.log(id);
     console.log(removeComment({ id }));
   };
+  const addFeedBacks = (id: any) => {
+    addFeeback({ comment: feedBack, commentId: id })
+    setFeedback("")
+  }
   console.log(user);
   return (
     <>
@@ -249,7 +253,7 @@ const ProductComment = ({ comments }: ProductCommentProps) => {
                         <div>
                           <Btn
                             label="Phản hồi"
-                            onClick={() => addFeeback({ comment: feedBack, commentId: item._id })}
+                            onClick={() => addFeedBacks(item._id)}
                           />
                         </div>
                       </div>
