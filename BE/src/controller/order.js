@@ -9,7 +9,7 @@ const getAll = async (req, res) => {
 
     if (!data || data.length === 0) {
       return res.status(404).json({
-        message: "Không có dữ liệu đơn hàng",
+        message: "Không có dữ liệu",
       });
     }
 
@@ -32,7 +32,7 @@ const getOne = async (req, res) => {
 
     if (!data || !data.length === 0) {
       return res.status(404).json({
-        message: "Không tìm thấy đơn hàng",
+        message: "Không có thông tin",
       });
     }
 

@@ -1,7 +1,7 @@
 // Trang Admin
 import BaseAdmin from "./admin/BaseAdmin";
 import AdminDashboardPage from "./admin/AdminDashboard/AdminDashboardPage";
-import AdminProductPage from "./admin/AdminProduct/AdminProduct";
+import AdminProductPage from "./admin/AdminProduct/AdminProductPage";
 import AdminUserPage from "./admin/AdminUser/AdminUserPage";
 import AdminCategoryPage from "./admin/AdminCategory/AdminCategoryPage";
 

@@ -117,6 +117,16 @@ const ProductTable = ({
   return (
     <>
       <Table
+        title={() => (
+          <Button
+            ghost
+            type="primary"
+            size="middle"
+            onClick={() => onAction("", "add")}
+          >
+            Thêm
+          </Button>
+        )}
         bordered
         rowKey="_id"
         size="middle"

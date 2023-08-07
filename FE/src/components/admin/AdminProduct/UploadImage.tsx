@@ -10,8 +10,16 @@ import type { UploadFile } from "antd/es/upload/interface";
 type UploadImageProps = {
   isEdit: boolean;
   listImage: IImageProduct[];
-  handleImageChange: (newFileList: UploadFile[]) => void;
+  handleImageChange: (newFileList: IImageProduct[]) => void;
 };
+
+const getBase64 = (file: RcFile): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
 
 const UploadImage = ({
   isEdit,
@@ -23,34 +31,34 @@ const UploadImage = ({
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
-  const getBase64 = (file: RcFile): Promise<string> =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
-    });
-
   const handleCancel = () => setPreviewOpen(false);
 
   const handlePreview = async (file: UploadFile) => {
     if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj as RcFile);
+      const base64Url = await getBase64(file.originFileObj as RcFile);
+      file.preview = base64Url;
     }
-
-    const previewUrl = file.url || (file.preview as string);
 
     setPreviewImage(file.url || (file.preview as string));
     setPreviewOpen(true);
     setPreviewTitle(
       file.name ||
-        (previewUrl && previewUrl.substring(previewUrl.lastIndexOf("/") + 1))
+        (file.url ? file.url.substring(file.url.lastIndexOf("/") + 1) : "")
     );
   };
 
   const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
     setFileList(newFileList);
-    handleImageChange(newFileList);
+
+    const newImages: IImageProduct[] = newFileList.map((file) => ({
+      uid: file.uid,
+      name: file.name,
+      status: file.status as string,
+      url: file.response?.url || file.url,
+    }));
+    console.log(newImages);
+
+    handleImageChange(newImages);
   };
 
   const uploadButton = (

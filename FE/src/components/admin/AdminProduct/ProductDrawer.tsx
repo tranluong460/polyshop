@@ -1,17 +1,13 @@
 import { useState, useEffect } from "react";
-import {
-  Descriptions,
-  Input,
-  InputNumber,
-  Form,
-  Button,
-  UploadFile,
-  Select,
-} from "antd";
+import { Descriptions, Input, InputNumber, Form, Button, Select } from "antd";
 
 import UploadImage from "./UploadImage";
 
-import { ICategoryProduct, IProduct } from "../../../interface";
+import { ICategoryProduct, IImageProduct, IProduct } from "../../../interface";
+import {
+  useAddProductsMutation,
+  useUpdateProductsMutation,
+} from "../../../api/products";
 
 const { Option } = Select;
 
@@ -19,18 +15,26 @@ type Props = {
   product: IProduct | undefined;
   listCategories: ICategoryProduct[] | undefined;
   isEdit: boolean;
+  isAdd: boolean;
 };
 
-const ProductDrawer = ({ product, listCategories, isEdit }: Props) => {
+const ProductDrawer = ({ product, listCategories, isEdit, isAdd }: Props) => {
   const [form] = Form.useForm();
   const [selectedSlug, setSelectedSlug] = useState("");
+  const [images, setImages] = useState<IImageProduct[]>([]);
+  const [addProducts, resultAdd] = useAddProductsMutation();
+  const [updateProducts, resultUpdate] = useUpdateProductsMutation();
 
   const onFinish = (values: IProduct) => {
-    const matchingCategory = listCategories?.find(
-      (category) =>
-        category.slug === values.category?.slug &&
-        category.brand === values.category?.brand
-    );
+    const matchingCategory = listCategories?.find((category) => {
+      if (typeof values.category === "object" && values.category !== null) {
+        return (
+          category.slug === values.category.slug &&
+          category.brand === values.category.brand
+        );
+      }
+      return false;
+    });
 
     let category;
 
@@ -38,15 +42,22 @@ const ProductDrawer = ({ product, listCategories, isEdit }: Props) => {
       category = matchingCategory._id;
     }
 
-    const newValues = {
+    const newValues: IProduct = {
       ...values,
       category,
+      images,
     };
-    console.log("Success:", newValues);
+
+    if (isEdit === true && isAdd === false) {
+      updateProducts(newValues);
+    }
+    if (isEdit === true && isAdd === true) {
+      addProducts(newValues);
+    }
   };
 
-  const handleImageChange = (newFileList: UploadFile[]) => {
-    console.log(newFileList);
+  const handleImageChange = (newFileList: IImageProduct[]) => {
+    setImages(newFileList);
   };
 
   const handleSlugChange = (value: string) => {
@@ -95,6 +106,10 @@ const ProductDrawer = ({ product, listCategories, isEdit }: Props) => {
         initialValues={product || {}}
         autoComplete="off"
       >
+        <Form.Item name="_id" hidden>
+          <Input />
+        </Form.Item>
+
         <Descriptions
           extra={
             <Button
@@ -115,7 +130,12 @@ const ProductDrawer = ({ product, listCategories, isEdit }: Props) => {
               name="name"
               rules={[{ required: true, message: "Tên không được để trống" }]}
             >
-              <Input.TextArea rows={3} bordered={isEdit} readOnly={!isEdit} />
+              <Input.TextArea
+                rows={3}
+                bordered={isEdit}
+                readOnly={!isEdit}
+                disabled={resultUpdate.isLoading || resultAdd.isLoading}
+              />
             </Form.Item>
           </Descriptions.Item>
 
@@ -134,6 +154,7 @@ const ProductDrawer = ({ product, listCategories, isEdit }: Props) => {
                 ${isEdit ? "" : "pointer-events-none"}
                 `}
                 suffixIcon={!isEdit ? null : undefined}
+                disabled={resultUpdate.isLoading || resultAdd.isLoading}
               />
             </Form.Item>
           </Descriptions.Item>
@@ -146,7 +167,12 @@ const ProductDrawer = ({ product, listCategories, isEdit }: Props) => {
               ]}
             >
               <Select
-                disabled={isEdit && !form.getFieldValue(["category", "slug"])}
+                disabled={
+                  (isEdit &&
+                    !form.getFieldValue(["category", "slug"]) &&
+                    resultUpdate.isLoading) ||
+                  resultAdd.isLoading
+                }
                 bordered={isEdit}
                 suffixIcon={!isEdit ? null : undefined}
                 className={`mt-5
@@ -179,6 +205,7 @@ const ProductDrawer = ({ product, listCategories, isEdit }: Props) => {
                 formatter={(value) =>
                   `${value}₫`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                 }
+                disabled={resultUpdate.isLoading || resultAdd.isLoading}
               />
             </Form.Item>
           </Descriptions.Item>
@@ -200,6 +227,7 @@ const ProductDrawer = ({ product, listCategories, isEdit }: Props) => {
                 formatter={(value) =>
                   `${value}₫`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                 }
+                disabled={resultUpdate.isLoading || resultAdd.isLoading}
               />
             </Form.Item>
           </Descriptions.Item>
@@ -211,6 +239,7 @@ const ProductDrawer = ({ product, listCategories, isEdit }: Props) => {
                 readOnly={true}
                 bordered={isEdit}
                 style={{ width: "100%" }}
+                disabled={resultUpdate.isLoading || resultAdd.isLoading}
               />
             </Form.Item>
           </Descriptions.Item>
@@ -229,6 +258,7 @@ const ProductDrawer = ({ product, listCategories, isEdit }: Props) => {
                 bordered={isEdit}
                 readOnly={!isEdit}
                 style={{ width: "100%" }}
+                disabled={resultUpdate.isLoading || resultAdd.isLoading}
               />
             </Form.Item>
           </Descriptions.Item>
@@ -238,7 +268,12 @@ const ProductDrawer = ({ product, listCategories, isEdit }: Props) => {
               name="description"
               rules={[{ required: true, message: "Mô tả không được để trống" }]}
             >
-              <Input.TextArea rows={6} bordered={isEdit} readOnly={!isEdit} />
+              <Input.TextArea
+                rows={6}
+                bordered={isEdit}
+                readOnly={!isEdit}
+                disabled={resultUpdate.isLoading || resultAdd.isLoading}
+              />
             </Form.Item>
           </Descriptions.Item>
         </Descriptions>
@@ -258,7 +293,7 @@ const ProductDrawer = ({ product, listCategories, isEdit }: Props) => {
             >
               <UploadImage
                 isEdit={isEdit}
-                listImage={product?.images || []}
+                listImage={product?.images || images || []}
                 handleImageChange={handleImageChange}
               />
             </Form.Item>

@@ -45,27 +45,29 @@ const AdminCategoryPage = ({ listCategories }: AdminCategoryProps) => {
     setSelectedId(_id);
   };
 
-  if (resultDelete.isLoading) {
-    messageApi.open({
-      key,
-      type: "loading",
-      content: "Loading...",
-    });
-  }
-  if (resultDelete.isSuccess) {
-    messageApi.open({
-      key,
-      type: "success",
-      content: "Xóa thành công!",
-    });
-  }
-  if (resultDelete.isError) {
-    messageApi.open({
-      key,
-      type: "error",
-      content: "Đã có lỗi xảy ra!",
-    });
-  }
+  useEffect(() => {
+    if (resultDelete.isLoading) {
+      messageApi.open({
+        key,
+        type: "loading",
+        content: "Loading...",
+      });
+    }
+    if (resultDelete.isSuccess) {
+      messageApi.open({
+        key,
+        type: "success",
+        content: "Xóa thành công!",
+      });
+    }
+    if (resultDelete.isError) {
+      messageApi.open({
+        key,
+        type: "error",
+        content: "Đã có lỗi xảy ra!",
+      });
+    }
+  }, [resultDelete, messageApi]);
 
   useEffect(() => {
     const fetchListCategories = listCategories?.find(
@@ -85,13 +87,13 @@ const AdminCategoryPage = ({ listCategories }: AdminCategoryProps) => {
         onClose={onCancel}
         getContainer={false}
         open={openDrawer || isEdit || isAdd}
-        title={`${
-          isEdit
-            ? "Cập nhật thông tin"
-            : isAdd
-            ? "Thêm mới danh mục"
+        title={
+          isAdd
+            ? "Cập nhật danh mục"
+            : isEdit
+            ? "Chỉnh sửa danh mục"
             : "Thông tin chi tiết"
-        }`}
+        }
       >
         <CategoriesDrawer cate={cate} isEdit={isEdit} isAdd={isAdd} />
       </Drawer>

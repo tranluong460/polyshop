@@ -9,6 +9,7 @@ import ProductRouter from "./product";
 import CardRouter from "./card";
 import VoucherRouter from "./voucher";
 import FeedbackRouter from "./feedback";
+import PaymentRouter from "./payment";
 
 export {
   ProductRouter,
@@ -22,4 +23,5 @@ export {
   VoucherRouter,
   FeedbackRouter,
   CardRouter,
+  PaymentRouter,
 };

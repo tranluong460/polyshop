@@ -3,19 +3,19 @@ export interface IProduct {
   sold: number;
   stars: number;
   price: number;
-  category: ICategoryProduct;
+  category: ICategoryProduct | string | undefined;
   inventory: number;
   original_price: number;
   name: string;
   description: string;
   comments: ICommentsProduct[];
-  images: IImageProduct[];
+  images: IImageProduct[] | undefined;
 }
 
 export interface ICategoryProduct {
   _id?: string;
-  slug: string; // danh mục : điện thoại, máy tính ...
-  brand: string; // thương hiệu : iphone, msi ...
+  slug: string;
+  brand: string;
 }
 
 export interface ICommentsProduct {

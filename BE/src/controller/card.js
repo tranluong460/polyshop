@@ -1,9 +1,8 @@
-import Card from "../module/card";
-import User from "../module/auth";
-
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
+import Card from "../module/card";
+import User from "../module/auth";
 import { cardSchema } from "../validators/card";
 
 dotenv.config();
@@ -13,9 +12,10 @@ export const getAll = async (req, res) => {
     const data = await Card.find();
     if (!data || data.length === 0) {
       return res.status(404).json({
-        message: "Không có danh sách thẻ ngân hàng",
+        message: "Không có danh sách",
       });
     }
+
     return res.status(200).json({
       message: "Danh sách thẻ ngân hàng",
       data: data,
@@ -32,9 +32,10 @@ export const getOne = async (req, res) => {
     const data = await Card.findById(req.params.id);
     if (!data || data.length === 0) {
       return res.status(404).json({
-        message: "Không có thông tin thẻ ngân hàng",
+        message: "Không có thông tin",
       });
     }
+
     return res.status(200).json({
       message: "Thông tin thẻ ngân hàng",
       data: data,
@@ -56,15 +57,6 @@ export const create = async (req, res) => {
       });
     }
 
-    if (!req.headers.authorization) {
-      return res.status(401).json({
-        message: "Bạn chưa đăng nhập",
-      });
-    }
-
-    const token = req.headers.authorization.split(" ")[1];
-    const decoded = await jwt.verify(token, process.env.SECRET_KEY);
-
     const card = await Card.findOne({ card_number: req.body.card_number });
     if (card) {
       return res.status(409).json({
@@ -79,7 +71,7 @@ export const create = async (req, res) => {
       });
     }
 
-    const user = await User.findById(decoded.id);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({
         message: "Người dùng không tồn tại",
@@ -104,12 +96,6 @@ export const create = async (req, res) => {
 
 export const remove = async (req, res) => {
   try {
-    if (!req.headers.authorization) {
-      return res.status(401).json({
-        message: "Bạn chưa đăng nhập",
-      });
-    }
-
     const data = await Card.findByIdAndDelete(req.params.id);
 
     await User.updateMany(
@@ -130,12 +116,6 @@ export const remove = async (req, res) => {
 
 export const update = async (req, res) => {
   try {
-    if (!req.headers.authorization) {
-      return res.status(401).json({
-        message: "Bạn chưa đăng nhập",
-      });
-    }
-
     const { error } = cardSchema.validate(req.body, { abortEarly: false });
     if (error) {
       const errors = error.details.map((err) => err.message);

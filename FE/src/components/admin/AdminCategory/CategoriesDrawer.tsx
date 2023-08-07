@@ -18,10 +18,10 @@ const CategoriesDrawer = ({ cate, isEdit, isAdd }: CategoriesDrawerProps) => {
   const [updateCategories, resultUpdate] = useUpdateCategoriesMutation();
 
   const onFinish = (values: ICategoryProduct) => {
-    if (isEdit) {
+    if (isEdit === true && isAdd === false) {
       updateCategories(values);
     }
-    if (isAdd) {
+    if (isEdit === true && isAdd === true) {
       addCategories(values);
     }
   };
