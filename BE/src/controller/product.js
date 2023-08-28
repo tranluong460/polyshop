@@ -63,7 +63,6 @@ export const getOne = async (req, res) => {
 export const getProductByName = async (req, res) => {
   try {
     const { error } = searchSchema.validate(req.body, { abortEarly: false });
-
     if (error) {
       const errors = error.details.map((err) => err.message);
       return res.status(400).json({
@@ -71,9 +70,6 @@ export const getProductByName = async (req, res) => {
       });
     }
     const { name } = req.body;
-
-
-
     const data = await Product.find({
       name: {
         $regex: name,
@@ -91,6 +87,26 @@ export const getProductByName = async (req, res) => {
     });
   }
 }
+
+export const getProductByCate = async (req, res) => {
+  try {
+    const { brand, slug } = req.body;
+    const cate = await Category.findOne({ brand: brand, slug: slug })
+    const data = await Product.find({
+      category: cate._id
+    }).populate("category");
+
+    return res.status(200).json({
+      message: "Kết quả tìm kiếm",
+      data: data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Lỗi server: " + error.message,
+    });
+  }
+}
+
 export const create = async (req, res) => {
   try {
     const { error } = productSchema.validate(req.body, { abortEarly: false });

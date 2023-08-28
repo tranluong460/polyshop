@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { message } from "antd";
-import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
 
 import {
   AdminCategoryPage,
@@ -39,7 +39,7 @@ import {
 
 import { ICart, IProduct, IUser } from "./interface";
 
-import { useGetAllProductsQuery, useSearchProductMutation } from "./api/products";
+import { useGetAllProductsQuery, useSearchProductByCateMutation, useSearchProductMutation } from "./api/products";
 import { useGetAllCategoriesQuery } from "./api/categories";
 import { useGetUserByTokenMutation } from "./api/auth";
 import { useSelector } from "react-redux";

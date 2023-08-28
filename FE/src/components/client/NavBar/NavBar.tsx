@@ -71,7 +71,10 @@ const NavBar = ({
                   <Link
                     key={category._id}
                     className="hover:text-rose-500"
-                    to={`list-product?slug=${category.slug}?brand=${category.brand}`}
+                    to={{
+                      pathname: 'list-product',
+                      search: `?slug=${category.slug}&brand=${category.brand}`
+                    }}
                   >
                     <span className="">{category.brand}</span>
                   </Link>
