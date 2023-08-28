@@ -49,6 +49,22 @@ export const productApi = createApi({
       query: (id) => `/products/${id}`,
       providesTags: ["Product"],
     }),
+    searchProduct: builder.mutation({
+      query: (name: any) => ({
+        url: `/products/search`,
+        method: "POST",
+        body: name,
+      }),
+      // invalidatesTags: ["Product"],
+    }),
+    searchProductByCate: builder.mutation({
+      query: (cate: any) => ({
+        url: `/products/cate`,
+        method: "POST",
+        body: cate,
+      }),
+      // invalidatesTags: ["Product"],
+    }),
     addProducts: builder.mutation({
       query: (data: IProductData) => ({
         url: `/products`,
@@ -111,6 +127,8 @@ export const productApi = createApi({
 export const {
   useGetAllProductsQuery,
   useGetOneProductsQuery,
+  useSearchProductMutation,
+  useSearchProductByCateMutation,
   useAddProductsMutation,
   useUpdateProductsMutation,
   useDeleteProductsMutation,

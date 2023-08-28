@@ -14,6 +14,7 @@ type NavBarProps = {
   cartCount: number;
   currentUser: IUser | null;
   listCategories: ICategoryProduct[] | undefined;
+
 };
 
 const NavBar = ({
@@ -21,11 +22,13 @@ const NavBar = ({
   onOpen,
   cartCount,
   listCategories,
+
 }: NavBarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [listSlug, setListSlug] = useState<string[]>([]);
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -68,7 +71,10 @@ const NavBar = ({
                   <Link
                     key={category._id}
                     className="hover:text-rose-500"
-                    to={`list-product?slug=${category.slug}?brand=${category.brand}`}
+                    to={{
+                      pathname: 'list-product',
+                      search: `?slug=${category.slug}&brand=${category.brand}`
+                    }}
                   >
                     <span className="">{category.brand}</span>
                   </Link>

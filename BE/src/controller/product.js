@@ -2,11 +2,12 @@ import Product from "../module/products";
 import Category from "../module/category";
 
 import { productSchema } from "../validators/product";
+import { searchSchema } from "../validators/search";
+
 
 export const getAll = async (req, res) => {
   try {
     const data = await Product.find().populate("category");
-
     if (!data || data.length === 0) {
       return res.status(404).json({
         message: "Không có dữ liệu",
@@ -59,6 +60,52 @@ export const getOne = async (req, res) => {
     });
   }
 };
+export const getProductByName = async (req, res) => {
+  try {
+    const { error } = searchSchema.validate(req.body, { abortEarly: false });
+    if (error) {
+      const errors = error.details.map((err) => err.message);
+      return res.status(400).json({
+        message: errors,
+      });
+    }
+    const { name } = req.body;
+    const data = await Product.find({
+      name: {
+        $regex: name,
+        $options: 'i', // Case-insensitive search
+      },
+    }).populate("category");
+
+    return res.status(200).json({
+      message: "Kết quả tìm kiếm",
+      data: data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Lỗi server: " + error.message,
+    });
+  }
+}
+
+export const getProductByCate = async (req, res) => {
+  try {
+    const { brand, slug } = req.body;
+    const cate = await Category.findOne({ brand: brand, slug: slug })
+    const data = await Product.find({
+      category: cate._id
+    }).populate("category");
+
+    return res.status(200).json({
+      message: "Kết quả tìm kiếm",
+      data: data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Lỗi server: " + error.message,
+    });
+  }
+}
 
 export const create = async (req, res) => {
   try {

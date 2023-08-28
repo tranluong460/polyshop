@@ -24,6 +24,7 @@ const BaseClient = ({ currentUser, cart, listCategories }: BaseClientProps) => {
   const [isOpen, setIsOpen] = useState(true);
   const [openDrawn, setOpenDrawn] = useState(false);
 
+
   const setDrawn = () => {
     setOpenDrawn(!openDrawn);
   };
@@ -80,6 +81,7 @@ const BaseClient = ({ currentUser, cart, listCategories }: BaseClientProps) => {
         ) : null}
 
         <NavBar
+
           onOpen={setDrawn}
           cartCount={cart?.products.length || 0}
           listCategories={listCategories}

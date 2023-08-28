@@ -1,3 +1,4 @@
+import { useLocation } from "react-router-dom";
 import {
   Breadcrumb,
   Container,
@@ -7,6 +8,8 @@ import {
 } from "../../../components";
 
 import { ICategoryProduct, IFavoriteUser, IProduct } from "../../../interface";
+import { useSearchProductByCateMutation } from "../../../api/products";
+import { useEffect, useState } from "react";
 
 type ListProductPageProps = {
   favoriteUser: IFavoriteUser[] | undefined;
@@ -20,6 +23,18 @@ const ListProductPage = ({
   listProducts,
   listCategories,
 }: ListProductPageProps) => {
+  const [getPro] = useSearchProductByCateMutation()
+  const [pro, setPro] = useState([])
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const slug = searchParams.get('slug');
+  const brand = searchParams.get('brand');
+  const onChange = () => {
+    getPro({ slug, brand }).unwrap().then((res) => setPro(res.data));
+  }
+  useEffect(() => {
+    onChange();
+  }, [brand, slug])
   return (
     <>
       <div className="py-3">
@@ -46,11 +61,11 @@ const ListProductPage = ({
               </div>
 
               <div className="shadow-2xl rounded-xl">
-                <ProductList
+                {pro.length > 0 ? (<ProductList
                   small
-                  products={listProducts}
+                  products={pro}
                   favoriteUser={favoriteUser}
-                />
+                />) : (<div><h1 className="text-center font-medium text-2xl">Không có sản phẩm nào</h1></div>)}
               </div>
             </div>
           </div>

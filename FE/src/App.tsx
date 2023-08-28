@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { message } from "antd";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
 
 import {
   AdminCategoryPage,
@@ -37,23 +37,27 @@ import {
   Loading,
 } from "./components";
 
-import { ICart, IUser } from "./interface";
+import { ICart, IProduct, IUser } from "./interface";
 
-import { useGetAllProductsQuery } from "./api/products";
+import { useGetAllProductsQuery, useSearchProductByCateMutation, useSearchProductMutation } from "./api/products";
 import { useGetAllCategoriesQuery } from "./api/categories";
 import { useGetUserByTokenMutation } from "./api/auth";
+import { useSelector } from "react-redux";
 
 function App() {
   const { data: products } = useGetAllProductsQuery();
   const { data: categories } = useGetAllCategoriesQuery();
   const [getUser, resultGet] = useGetUserByTokenMutation();
+  const [searchPro] = useSearchProductMutation()
   const token = localStorage.getItem("token");
 
   const listProducts = products?.data;
   const listCategories = categories?.data;
   const [currentUser, setCurrentUser] = useState<IUser | null>(null);
+  const [pro, setPro] = useState<IProduct[]>([])
 
   const [cart, setCart] = useState<ICart | null>(null);
+  const searchTerm = useSelector((state: any) => state.search.searchTerm);
 
   useEffect(() => {
     if (token) {
@@ -67,7 +71,16 @@ function App() {
         });
     }
   }, [getUser, token]);
+  useEffect(() => {
+    if (searchTerm) {
+      searchPro({ name: searchTerm })
+        .unwrap()
+        .then((res) => {
+          setPro(res.data);
+        })
 
+    }
+  }, [searchTerm]);
   if (resultGet.isLoading) {
     return (
       <>
@@ -162,6 +175,17 @@ function App() {
                 />
               }
             />
+            <Route
+              path="product/:name"
+              element={
+                <HomePage
+                  favoriteUser={currentUser?.favorites}
+                  listProducts={pro}
+                  listCategories={listCategories}
+                />
+              }
+
+            />
           </Route>
 
           <Route path="/auth" element={<BaseAuth />}>
@@ -186,8 +210,8 @@ function App() {
               ) : (
                 <>
                   {resultGet.isLoading === false &&
-                  currentUser &&
-                  currentUser?.role === "Admin" ? (
+                    currentUser &&
+                    currentUser?.role === "Admin" ? (
                     <BaseAdmin />
                   ) : (
                     <ErrorPage />
