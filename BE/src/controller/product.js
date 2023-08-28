@@ -79,7 +79,7 @@ export const getProductByName = async (req, res) => {
         $regex: name,
         $options: 'i', // Case-insensitive search
       },
-    });
+    }).populate("category");
 
     return res.status(200).json({
       message: "Kết quả tìm kiếm",

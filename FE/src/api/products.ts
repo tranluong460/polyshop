@@ -50,7 +50,7 @@ export const productApi = createApi({
       providesTags: ["Product"],
     }),
     searchProduct: builder.mutation({
-      query: (name: string) => ({
+      query: (name: any) => ({
         url: `/products/search`,
         method: "POST",
         body: name,

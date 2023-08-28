@@ -40,12 +40,12 @@ const HomePage = ({
       setProductsBySlug(initialProductsBySlug);
     }
   }, [listCategories, listProducts]);
-
+  // console.log(listProducts);
   return (
     <>
       <Container>
         <Banner />
-        {Object.entries(productsBySlug).map(
+        {listProducts?.length > 0 ? Object.entries(productsBySlug).map(
           ([slug, products]) =>
             products.length > 0 && (
               <ProductList
@@ -56,7 +56,7 @@ const HomePage = ({
                 favoriteUser={favoriteUser}
               />
             )
-        )}
+        ) : <div className="m-6"><h1 className="text-center font-semibold text-2xl">Sản phẩm không tồn tại</h1></div>}
 
         <Offer />
 
