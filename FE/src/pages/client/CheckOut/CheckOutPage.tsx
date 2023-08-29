@@ -9,7 +9,12 @@ import {
 } from "../../../components";
 
 import { ICardUser } from "../../../interface";
-import { useGetCartByUserQuery } from "../../../api/auth";
+import {
+  useCreateOrderMutation,
+  useCreatePaymentMutation,
+  useGetCartByUserQuery,
+} from "../../../api/auth";
+import { message } from "antd";
 
 type CheckoutPageProps = {
   cardUser: ICardUser[] | undefined;
@@ -19,21 +24,65 @@ const CheckoutPage = ({ cardUser }: CheckoutPageProps) => {
   const { data } = useGetCartByUserQuery();
   const cart = data?.cart;
 
-  const [active, setActive] = useState("Thẻ ngân hàng");
+  const [active, setActive] = useState("Thanh toán bằng thẻ");
   const cardMain = cardUser && cardUser.find((card) => card.main === true);
-  const disabled = cart ? false : true;
+
+  const [createOrder, resultCreate] = useCreateOrderMutation();
+  const [createPayment] = useCreatePaymentMutation();
+
+  const totalPrice = cart?.products?.reduce((total: number, products: any) => {
+    const productPrice = products?.product?.price;
+    return total + productPrice * products?.quantity;
+  }, 0);
 
   const toggleActive = (text: string) => {
     setActive(text);
   };
 
-  const handlePayment = () => {
-    console.log(cardMain);
+  const handleOrder = () => {
+    const data = { totalPrice, paymentMethod: active };
+    createOrder(data)
+      .unwrap()
+      .then((response) => {
+        message.success(response.message);
+      })
+      .catch((error) => {
+        message.error(error.data.message);
+      });
+  };
+
+  const handlePayment = (
+    cardHolderName: string,
+    cardNumber: number | string,
+    startDate: string,
+    endDate: string,
+    cvv: string | number
+  ) => {
+    const data = { totalPrice, paymentMethod: active };
+    createOrder(data)
+      .unwrap()
+      .then((response) => {
+        message.success(response.message);
+        if (active === "Thanh toán bằng thẻ") {
+          const expirationDate = `${startDate}/${endDate}`;
+          const dataPayment = {
+            orderId: response.order._id,
+            cardHolderName,
+            cardNumber,
+            expirationDate,
+            cvv,
+          };
+          createPayment(dataPayment);
+        }
+      })
+      .catch((error) => {
+        message.error(error.data.message);
+      });
   };
 
   const paymentMethod = [
     {
-      name: "Thẻ ngân hàng",
+      name: "Thanh toán bằng thẻ",
       image: "/images/payment/payment-method-1.png",
     },
     {
@@ -41,7 +90,7 @@ const CheckoutPage = ({ cardUser }: CheckoutPageProps) => {
       image: "/images/payment/payment-method-2.png",
     },
     {
-      name: "Thanh toán khi giao hàng",
+      name: "Thanh toán khi nhận hàng",
       image: "/images/payment/payment-method-3.png",
     },
   ];
@@ -77,26 +126,26 @@ const CheckoutPage = ({ cardUser }: CheckoutPageProps) => {
                 ))}
               </div>
 
-              {active === "Thẻ ngân hàng" && (
+              {active === "Thanh toán bằng thẻ" && (
                 <CheckoutCard
                   cardMain={cardMain}
                   title="Thẻ ngân hàng"
                   onClick={handlePayment}
-                  disabled={disabled}
+                  disabled={resultCreate.isLoading}
                 />
               )}
 
-              {active === "Thanh toán khi giao hàng" && (
+              {active === "Thanh toán khi nhận hàng" && (
                 <CheckoutDelivery
-                  title="Thanh toán khi giao hàng"
-                  onClick={handlePayment}
-                  disabled={disabled}
+                  title="Thanh toán khi nhận hàng"
+                  onClick={handleOrder}
+                  disabled={resultCreate.isLoading}
                 />
               )}
             </div>
 
             <div className="col-span-1">
-              <CheckoutOrder cart={cart} />
+              <CheckoutOrder cart={cart} totalPrice={totalPrice} />
             </div>
           </div>
         </div>

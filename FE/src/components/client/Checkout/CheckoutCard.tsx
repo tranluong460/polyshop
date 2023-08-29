@@ -7,7 +7,13 @@ import { ICardUser } from "../../../interface";
 type CheckoutCardProps = {
   title: string;
   cardMain: ICardUser | undefined;
-  onClick: () => void;
+  onClick: (
+    cardHolderName: string,
+    cardNumber: number | string,
+    startDate: string,
+    endDate: string,
+    cvv: string | number
+  ) => void;
   disabled: boolean;
 };
 
@@ -94,7 +100,7 @@ const CheckoutCard = ({
             <div className="md:w-1/3 w-auto">
               <Button
                 label="Thanh toán"
-                onClick={onClick}
+                onClick={() => onClick(name, number, startDate, endDate, cvv)}
                 disabled={disabled}
               />
             </div>

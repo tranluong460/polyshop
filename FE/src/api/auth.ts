@@ -276,6 +276,36 @@ export const authApi = createApi({
       },
       providesTags: ["Auth"],
     }),
+    createOrder: builder.mutation({
+      query: (data) => {
+        const token = localStorage.getItem("token");
+
+        return {
+          url: `/order`,
+          method: "POST",
+          body: data,
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        };
+      },
+      invalidatesTags: ["Auth"],
+    }),
+    createPayment: builder.mutation({
+      query: (data) => {
+        const token = localStorage.getItem("token");
+
+        return {
+          url: `/payment`,
+          method: "POST",
+          body: data,
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        };
+      },
+      invalidatesTags: ["Auth"],
+    }),
   }),
 });
 
@@ -297,4 +327,6 @@ export const {
   useAddCartMutation,
   useUpdateCartMutation,
   useGetCartByUserQuery,
+  useCreateOrderMutation,
+  useCreatePaymentMutation,
 } = authApi;

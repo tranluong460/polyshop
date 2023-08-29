@@ -6,15 +6,11 @@ import { ICart } from "../../../interface";
 
 type CheckoutOrderProps = {
   cart: ICart;
+  totalPrice: number;
 };
 
-const CheckoutOrder = ({ cart }: CheckoutOrderProps) => {
+const CheckoutOrder = ({ cart, totalPrice }: CheckoutOrderProps) => {
   const [discount, setDiscount] = useState("");
-
-  const totalPrice = cart?.products?.reduce((total: number, products: any) => {
-    const productPrice = products?.product?.price;
-    return total + productPrice * products?.quantity;
-  }, 0);
 
   return (
     <>

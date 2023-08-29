@@ -85,25 +85,30 @@ const create = async (req, res) => {
       });
     }
 
-    const voucherIds = req.body.vouchers;
+    if (req.body.vouchers && req.body.vouchers.length > 0) {
+      const voucherIds = req.body.vouchers;
 
-    const updateVoucher = async (voucherId) => {
-      const voucher = await Voucher.findById(voucherId);
-      if (!voucher) {
-        return res.status(404).json({
-          message: "Voucher không tồn tại",
-        });
-      }
+      const updateVoucher = async (voucherId) => {
+        const voucher = await Voucher.findById(voucherId);
+        if (!voucher) {
+          return res.status(404).json({
+            message: "Voucher không tồn tại",
+          });
+        }
 
-      voucher.limit -= 1;
-      await voucher.save();
-    };
+        voucher.limit -= 1;
+        await voucher.save();
+      };
 
-    await Promise.all(voucherIds.map(updateVoucher));
+      await Promise.all(voucherIds.map(updateVoucher));
+    }
 
     const updatedUser = await User.findOneAndUpdate(
       { _id: req.user._id },
-      { $push: { orders: createdOrder._id, vouchers: voucherIds }, cart: null },
+      {
+        $push: { orders: createdOrder._id, vouchers: req.body.vouchers },
+        cart: null,
+      },
       { new: true }
     );
 
