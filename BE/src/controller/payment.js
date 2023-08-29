@@ -1,7 +1,6 @@
 import Payment from "../module/payment";
 import Order from "../module/order";
 import Discount from "../module/voucher";
-
 import { paymentSchema } from "../validators/payment";
 
 export const processPayment = async (req, res) => {
@@ -19,7 +18,9 @@ export const processPayment = async (req, res) => {
 
     const order = await Order.findById(orderId);
     if (!order) {
-      return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
+      return res.status(404).json({
+        message: "Không tìm thấy đơn hàng",
+      });
     }
 
     if (order.status !== "Chờ thanh toán") {

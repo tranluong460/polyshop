@@ -9,6 +9,7 @@ import {
   getOne,
 } from "../controller/order";
 
+import { loginMiddleware } from "../middleware/loginPermission";
 import { checkPermission } from "../middleware/checkPermission";
 
 const router = express.Router();
@@ -16,7 +17,7 @@ const router = express.Router();
 router.get("/", getAll);
 router.get("/:id", getOne);
 router.get("/user/:userId", findOrdersByUserId);
-router.post("/", create);
+router.post("/", loginMiddleware, create);
 router.put("/:id", checkPermission, edit);
 router.delete("/:id", checkPermission, del);
 

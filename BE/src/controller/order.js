@@ -1,6 +1,7 @@
 import Order from "../module/order";
 import User from "../module/auth";
 import Voucher from "../module/voucher";
+import Cart from "../module/cart";
 import { orderSchema } from "../validators/order";
 
 const getAll = async (req, res) => {
@@ -18,8 +19,6 @@ const getAll = async (req, res) => {
       data,
     });
   } catch (err) {
-    console.log(err);
-
     return res.status(500).json({
       message: "Đã có lỗi xảy ra",
     });
@@ -49,47 +48,81 @@ const getOne = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    const { error } = orderSchema.validate(req.body, { abortEarly: false });
-    if (error) {
-      const errors = error.details.map((err) => err.message);
+    const { error: validationError } = orderSchema.validate(req.body, {
+      abortEarly: false,
+    });
+    if (validationError) {
       return res.status(400).json({
-        message: errors,
+        message: validationError.details.map((err) => err.message),
       });
     }
 
-    let status = "Đang xử lý";
-    if (req.body.paymentMethod === "Thanh toán bằng thẻ") {
-      status = "Chờ thanh toán";
+    const userCart = await Cart.findById(req.user.cart);
+    if (!userCart) {
+      return res.status(404).json({
+        message: "Chưa có giỏ hàng",
+      });
     }
 
-    const order = await Order.create({ ...req.body, status });
+    const orderStatus =
+      req.body.paymentMethod === "Thanh toán bằng thẻ"
+        ? "Chờ thanh toán"
+        : "Đang xử lý";
 
-    if (!order) {
+    const cartProducts = userCart.products;
+    const userId = req.user._id;
+    const orderData = {
+      ...req.body,
+      products: cartProducts,
+      user: userId,
+      status: orderStatus,
+    };
+
+    const createdOrder = await Order.create(orderData);
+    if (!createdOrder) {
       return res.status(404).json({
         message: "Tạo đơn hàng thất bại",
       });
     }
 
     const voucherIds = req.body.vouchers;
-    for (const voucherId of voucherIds) {
+
+    const updateVoucher = async (voucherId) => {
       const voucher = await Voucher.findById(voucherId);
-
-      if (voucher) {
-        voucher.limit -= 1;
-        await voucher.save();
+      if (!voucher) {
+        return res.status(404).json({
+          message: "Voucher không tồn tại",
+        });
       }
-    }
 
-    await User.findOneAndUpdate(
-      { _id: req.body.user },
-      { $push: { order: order._id, vouchers: voucherIds } },
+      voucher.limit -= 1;
+      await voucher.save();
+    };
+
+    await Promise.all(voucherIds.map(updateVoucher));
+
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: req.user._id },
+      { $push: { orders: createdOrder._id, vouchers: voucherIds }, cart: null },
       { new: true }
     );
 
+    if (!updatedUser) {
+      return res.status(404).json({
+        message: "Người dùng không tồn tại",
+      });
+    }
+
+    const deletedCart = await Cart.findByIdAndRemove(req.user.cart);
+    if (!deletedCart) {
+      return res.status(404).json({
+        message: "Không thể xóa giỏ hàng",
+      });
+    }
+
     return res.status(201).json({
       message: "Tạo đơn hàng thành công",
-      orderId: order._id,
-      order,
+      order: createdOrder,
     });
   } catch (err) {
     return res.status(500).json({
