@@ -1,5 +1,5 @@
-import Product from "../module/products";
 import Category from "../module/category";
+import Product from "../module/products";
 
 import { productSchema } from "../validators/product";
 
